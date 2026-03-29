@@ -17,5 +17,6 @@ typedef struct
 // Fungsi untuk Buffer
 void initBuffer(Buffer *buff); // Fungsi untuk mengosongkan memori dan menyiapkan buffer teks baru
 void addBaris(Buffer *buff, char *input);  // Fungsi untuk menyalin teks input ke indeks array 2D yang masih kosong
+void insertHuruf(Buffer *buff, int *baris, int *kolom, char ch); // Fungsi untuk menyisipkan karakter ke dalam teks
 
 #endif
