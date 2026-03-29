@@ -1,4 +1,4 @@
-#include "../source/buffer.h"
+#include "../header/buffer.h"
 #include <conio.h> 
 
 void initBuffer(Buffer *buff) 
