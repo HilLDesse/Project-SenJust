@@ -56,3 +56,18 @@ void deleteHuruf(Buffer *buff, int *baris, int *kolom)
         *kolom = long_atas;
     }
 }
+
+void newBaris(Buffer *buff, int *baris, int *kolom) 
+{
+    for (int i = buff->total_baris; i > *baris; i--) // Membuat ruang kosong di bawah baris kursor saat ini
+    {
+        strcpy(buff->teks[i], buff->teks[i - 1]);
+    }
+
+    strcpy(buff->teks[*baris + 1], &buff->teks[*baris][*kolom]); // Memindahkan sisa karakter dari kursor ke baris baru
+    
+    buff->teks[*baris][*kolom] = '\0';
+    buff->total_baris++;
+    (*baris)++;
+    *kolom = 0;
+}
