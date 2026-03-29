@@ -28,3 +28,31 @@ void insertHuruf(Buffer *buff, int *baris, int *kolom, char ch)
     buff->teks[*baris][*kolom] = ch;
     (*kolom)++;
 }
+
+void deleteHuruf(Buffer *buff, int *baris, int *kolom)
+{
+    if (*kolom > 0) // Memastikan ada karakter di kiri yang bisa dihapus
+    {
+        int panjang = strlen(buff->teks[*baris]);
+
+        for (int i = *kolom; i <= panjang; i++)
+        {
+            buff->teks[*baris][i - 1] = buff->teks[*baris][i]; // Menggeser karakter dari kanan ke kiri
+        }
+        (*kolom)--;
+    } 
+    else if (*baris > 0)
+    {
+        int long_atas = strlen(buff->teks[*baris - 1]); // Mencari panjang baris atas 
+
+        strcat(buff->teks[*baris - 1], buff->teks[*baris]); // Menggabungkan teks baris saat ini ke ujung baris atas
+
+        for (int i = *baris; i < buff->total_baris; i++)
+        {
+            strcpy(buff->teks[i], buff->teks[i + 1]); // Menggeser baris di bawahnya naik ke atas
+        }
+        buff->total_baris--;
+        (*baris)--;
+        *kolom = long_atas;
+    }
+}
