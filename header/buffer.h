@@ -12,6 +12,8 @@ typedef struct
 {
     char teks[MAX_LINE][MAX_COL];
     int total_baris;
+    char namaFile[100];
+    int isSaved;
 } Buffer;
 
 // Fungsi untuk Buffer

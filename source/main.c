@@ -4,6 +4,7 @@
 #include <string.h>
 #include "../header/buffer.h"
 #include "../header/screen.h"
+#include "../header/file_s.h"
 
 int main() 
 {
@@ -23,9 +24,29 @@ int main()
     {
         input = getch(); 
 
-        if (input == 27) // Tombol ESC untuk keluar
-        { 
-            break;
+        if (input == 27) // Tombol ESC untuk keluar dari mode edit
+        {          
+            system("cls"); 
+                        
+            printf("Apakah Anda ingin menyimpan teks menjadi file baru? (y/n): ");
+            char simpan = getch(); 
+                        
+            if (simpan == 'y' || simpan == 'Y') 
+            {
+                saveFile(&buf); 
+                            
+                printf("Tekan enter untuk kembali ke menu utama...");
+                getchar();
+                        
+                break; 
+            }
+            else if (simpan == 'n' || simpan == 'N') 
+            {
+                printf("Perubahan tidak disimpan....\n");
+                printf("Tekan enter untuk melanjutkan...");
+                getchar();
+                break; 
+            }
         }
         else if (input == 8)  // Tombol Backspace untuk menghapus karakter
         { 
