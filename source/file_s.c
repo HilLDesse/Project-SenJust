@@ -31,3 +31,15 @@ void shortcutSave(Buffer *buff)
         buff->isSaved = 1; // Menandai bahwa file sudah disimpan
     }
 }
+
+void saveAS(Buffer *buff) 
+{
+    if (buff->input == 1)
+    {
+        printf("Masukkan nama file baru: ");
+        fgets(buff->namanewFile, 100, stdin); // Mengambil input nama file dari user
+        buff->namanewFile[strcspn(buff->namanewFile, "\n")] = 0; // Menghapus /n dan menggantingan dengan 0 
+        strcpy(buff->namaFile, buff->namanewFile); // Menyalin file lama ke file baru
+        saveFile(buff); // Menyimpan file dengan nama baru
+    }
+}
