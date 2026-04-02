@@ -20,6 +20,16 @@ void openFile(Buffer *ed) {
 
             fclose(file);
             ed->isSaved = 1; // 1 artinya file sudah di save
-            printf("[Berhasil] file %s dibuka.\n", ed->namaFile);
+            printf("[Berhasil] file %s dibuka.\n", ed->namaFile); 
+
+            printf("\n--ISI FILE---\n");
+            for(int i = 0;i < ed->total_baris; i++) {
+                printf("\n%s\n", ed->teks[i]); // Menampilkan isi dari file 
+            }
+            printf("---------------\n");
+
+    } else {
+        printf("[ERROR] File tidak ditemukan!\n");
+        ed->namaFile[0] = '\0';  // untuk stop membaca file 
     }
 }
