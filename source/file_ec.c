@@ -46,54 +46,8 @@ void editFile(Buffer *buff)
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
         }
-        else if (buff->input == 27 && buff->isSaved == 0) // Input Esc untuk keluar jika file belum disimpan
-        {
-            system("cls");
-            printf("File belum disimpan, simpan sekarang? (y/n): ");
-            char simpan = getch();
-            if (simpan == 'y' || simpan == 'Y') 
-            {
-                saveFile(buff);
-                printf("\nLanjut edit file atau kembali menu utama? (y/n): ");
-                char lanjut = getch();
-                if (lanjut == 'y' || lanjut == 'Y')
-                {
-                    printLayar(buff, buff->b_now, buff->k_now);
-                    editFile(buff);
-                }
-                else if (lanjut == 'n' || lanjut == 'N')
-                {
-                    printf("Kembali ke menu utama...");
-                    break; 
-                }
-            }
-            else if (simpan == 'n' || simpan == 'N') 
-            {
-                printf("Perubahan tidak disimpan\n");
-                printf("Lanjutkan kembali ke menu utama...");
-                getchar();
-                break; 
-            }
-            break; 
-        }
-        else if (buff->input == 27 && buff->isSaved == 1) // Input Esc untuk keluar jika file sudah disimpan
-        {
-            system("cls");
-            printf("Lanjut edit file atau kembali menu utama? (y/n): ");
-            char lanjut = getch();
-            if (lanjut == 'y' || lanjut == 'Y')
-            {
-                printLayar(buff, buff->b_now, buff->k_now);
-                editFile(buff);
-            }
-            else if (lanjut == 'n' || lanjut == 'N')
-            {
-                printf("\nLanjutkan kembali ke menu utama...");
-                getchar();
-                break; 
-            }
-        }
         shortcutSave(buff);
+        saveAS(buff);
     }
 }
 
