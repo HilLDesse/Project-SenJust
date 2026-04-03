@@ -6,6 +6,7 @@
 #include "../header/screen.h"
 #include "../header/file_ec.h"
 #include "../header/file_s.h"
+#include "../header/menu.h"
 
 int main() 
 {
@@ -17,7 +18,7 @@ int main()
     buff.isSaved = 0; // Status file belum disimpan
     buff.namaFile[0] = '\0'; 
 
-    createFile(&buff); // Mulai dengan membuat file baru
+    tampilkanMenu(&buff);
 
     return 0;
 }
