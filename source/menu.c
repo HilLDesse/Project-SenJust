@@ -29,27 +29,9 @@ void tampilkanMenu(Buffer *buff)
         switch(pilihan) {
             case 1:
                 initBuffer(buff);
-                buff->isSaved = 0; 
-                
-                // Mengambil alih logika "Buat File" agar tidak memakai file_ec.c
-                printf("\nMasukkan nama file yang ingin dibuat (contoh: tugas.txt): "); 
-                fgets(buff->namaFile, 100, stdin);
-                buff->namaFile[strcspn(buff->namaFile, "\n")] = 0; 
-
-                file = fopen(buff->namaFile, "w"); 
-                if (file != NULL) {
-                    fclose(file); // Langsung tutup karena hanya untuk memancing file terbuat di sistem
-                    printf("File '%s' siap diedit!\n", buff->namaFile);
-                    printf("Tekan enter untuk mulai mengedit...\n");
-                    getch();
-                    
-                    // PANGGIL EDITOR KURSOR KITA, bukan editFile!
-                    editorKursor(buff); 
-                } else {
-                    printf("Gagal membuat file!\n");
-                    getch();
-                }
-                break;
+                buff->isSaved = 0;
+                buff->namaFile[0] = '\0';
+                createFile(buff);
                 
             case 2:
                 initBuffer(buff);
@@ -57,18 +39,6 @@ void tampilkanMenu(Buffer *buff)
                 buff->namaFile[0] = '\0';
                 
                 openFile(buff);
-                
-                if (buff->namaFile[0] != '\0') {
-                    printf("\nTekan tombol apa saja untuk mulai mengedit file ini...\n");
-                    getch();
-                    
-                    // PANGGIL EDITOR KURSOR KITA, bukan editFile!
-                    editorKursor(buff);
-                } else {
-                    printf("\nTekan tombol apa saja untuk kembali ke menu...\n");
-                    getch();
-                }
-                break;
                 
             case 3:
                 printf("\nKeluar dari aplikasi...\n");
