@@ -6,6 +6,7 @@
 #include "../header/screen.h"
 #include "../header/file_s.h"
 #include "../header/file_ec.h"
+#include "../header/cursor.h"
 
 void editFile(Buffer *buff)
 {
@@ -48,6 +49,8 @@ void editFile(Buffer *buff)
         }
         shortcutSave(buff);
         saveAS(buff);
+
+        editorKursor(buff);
     }
 }
 
