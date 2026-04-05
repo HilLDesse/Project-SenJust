@@ -14,6 +14,7 @@ typedef struct
     int total_baris;
     char namaFile[100];
     char namanewFile[100];
+    char namaoldFile[100];
     int isSaved;
     char input;
     int b_now;
