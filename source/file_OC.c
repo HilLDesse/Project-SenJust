@@ -46,18 +46,30 @@ void openFile(Buffer *ed) {
 }
 
 void closeFile(Buffer *ed) {
-    if (ed->input == 27 && ed->isSaved == 0) { // Kondisi user input 27 (ESC) dan file belum disave
+
+    ed->next = 1; // Default program terus berlanjut
+
+    if (ed->isSaved == 0) { // Kondis file belum disave
         system("cls");
         printf("[PERINGATAN] File belum disave, Apakah anda ingin menyimpan? (y/n): ");
         char simpan = getch();
+        
         if (simpan == 'y' || simpan == 'Y') {
             saveFile(ed);
-            printf("\nLanjut edit file atau kembali menu utama? (y/n): ");
-            char lanjut = getch();
-            if (lanjut == 'y' || lanjut == 'Y') {
-                printLayar(ed, ed->b_now, ed->k_now);
-                editFile(ed);
-            }
+        } else if (simpan == 'n' || simpan == 'N') {
+            printf("Perubahan tidak disimpan\n");
+        } else {
+            printf("\nInput tidak valid.\n");
+            getch();
+            return;
         }
-    }
+
+        printf("\nLanjut edit file atau kembali ke menu utama? (y/n): ");
+        char lanjut = getch();
+
+        if (lanjut == 'y' || lanjut == 'Y') {
+            ed->next = 1;                       // Program terus berjalan
+            printLayar(ed, ed->b_now, ed->k_now);
+        }
+    } 
 }

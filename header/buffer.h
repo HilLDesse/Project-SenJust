@@ -16,6 +16,7 @@ typedef struct
     char namanewFile[100];
     int isSaved;
     char input;
+    int next;
     int b_now;
     int k_now;
 } Buffer;
