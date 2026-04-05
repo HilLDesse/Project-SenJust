@@ -18,15 +18,12 @@ void gotoXY(int x, int y) {
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-// Fungsi BARU: Untuk mewarnai teks yang sedang di-block
 void cetakHighlight(Buffer *buff, int start_b, int start_k, int end_b, int end_k) {
     if (start_b == -1) return; // Jika tidak ada yang diseleksi, batalkan
 
-    // Pastikan kita tahu mana titik awal (kiri-atas) dan akhir (kanan-bawah)
     int b1 = start_b, k1 = start_k;
     int b2 = end_b, k2 = end_k;
 
-    // Jika seleksi mundur (dari kanan ke kiri / bawah ke atas), tukar posisinya
     if (b1 > b2 || (b1 == b2 && k1 > k2)) {
         b1 = end_b; k1 = end_k;
         b2 = start_b; k2 = start_k;
@@ -46,13 +43,11 @@ void cetakHighlight(Buffer *buff, int start_b, int start_k, int end_b, int end_k
             printf("%c", buff->teks[r][c]); // Cetak ulang hurufnya di atas cetakan temanmu
         }
     }
-    // Kembalikan warna terminal ke standar (Text Putih, Background Hitam)
+
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
-// ==========================================
 // 1. FUNGSI PERGERAKAN KURSOR DASAR
-// ==========================================
 void moveLeft(Buffer *buff) {
     if (buff->k_now > 0) {
         buff->k_now--; 
@@ -92,9 +87,7 @@ void moveDown(Buffer *buff) {
     }
 }
 
-// ==========================================
 // 2. FUNGSI NAVIGASI CEPAT (CTRL + PANAH)
-// ==========================================
 void moveWordLeft(Buffer *buff) {
     while (buff->k_now > 0 && isspace(buff->teks[buff->b_now][buff->k_now - 1])) moveLeft(buff);
     while (buff->k_now > 0 && !isspace(buff->teks[buff->b_now][buff->k_now - 1])) moveLeft(buff);
@@ -113,12 +106,9 @@ void moveWordRight(Buffer *buff) {
     }
 }
 
-// ==========================================
 // 3. FUNGSI EDITOR UTAMA
-// ==========================================
 void editorKursor(Buffer *buff)
 {
-    // Variabel Lokal untuk menampung status "Block"
     int is_selecting = 0;
     int sel_start_b = -1;
     int sel_start_k = -1;
@@ -141,7 +131,6 @@ void editorKursor(Buffer *buff)
     {
         buff->input = getch();
         
-        // --- DETEKSI TOMBOL ARAH PANAH (Extended Keys) ---
         if (buff->input == -32 || buff->input == 224 || buff->input == 0) 
         {
             int arrow = getch(); 
@@ -173,7 +162,6 @@ void editorKursor(Buffer *buff)
 
             printLayar(buff, buff->b_now, buff->k_now);
             
-            // Jika sedang menyeleksi, timpa layarnya dengan warna blok!
             if (is_selecting) {
                 cetakHighlight(buff, sel_start_b, sel_start_k, buff->b_now, buff->k_now);
             }
