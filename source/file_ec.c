@@ -49,7 +49,7 @@ void editFile(Buffer *buff)
         }
         shortcutSave(buff);
         saveAS(buff);
-
+        closeFile(buff);
         editorKursor(buff);
     }
 }

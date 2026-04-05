@@ -33,7 +33,7 @@ void openFile(Buffer *ed) {
             }
             printf("---------------\n");
 
-            printf("Apakah anda ingin mengedit file ini? (y/n)");
+            printf("Apakah anda ingin mengedit file ini? (y/n): ");
             char edit = getch();
             if (edit == 'y' || edit == 'Y') {
                 editFile(ed);
