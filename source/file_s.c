@@ -19,6 +19,7 @@ void saveFile(Buffer *buff)
             fprintf(file, "%s\n", buff->teks[i]); // Menulis setiap baris teks ke dalam file 
         }
         
+        fclose(file);
         buff->isSaved = 1; // Menandai bahwa file sudah disimpan
     } 
     else
