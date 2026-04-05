@@ -3,7 +3,7 @@
 #include <conio.h>
 #include <string.h>
 #include <ctype.h>
-#include <windows.h> // Wajib untuk GetAsyncKeyState dan SetConsoleTextAttribute
+#include <windows.h>
 
 #include "../header/cursor.h"
 #include "../header/screen.h"
