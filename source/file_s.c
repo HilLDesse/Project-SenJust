@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <conio.h>
+#include "../header/screen.h"
+#include "../header/file_ec.h"
 #include "../header/file_s.h"
 #include "../header/buffer.h"
 
@@ -15,6 +19,7 @@ void saveFile(Buffer *buff)
             fprintf(file, "%s\n", buff->teks[i]); // Menulis setiap baris teks ke dalam file 
         }
         
+        fclose(file);
         buff->isSaved = 1; // Menandai bahwa file sudah disimpan
     } 
     else
@@ -36,10 +41,15 @@ void saveAS(Buffer *buff)
 {
     if (buff->input == 1)
     {
+        system("cls");
+        strcpy(buff->namaoldFile, buff->namaFile);
         printf("Masukkan nama file baru: ");
         fgets(buff->namanewFile, 100, stdin); // Mengambil input nama file dari user
         buff->namanewFile[strcspn(buff->namanewFile, "\n")] = 0; // Menghapus /n dan menggantingan dengan 0 
         strcpy(buff->namaFile, buff->namanewFile); // Menyalin file lama ke file baru
         saveFile(buff); // Menyimpan file dengan nama baru
+        strcpy(buff->namaFile, buff->namaoldFile);
+        printf("\nKembali ke file sebelumnya");
+        getch();
     }
 }

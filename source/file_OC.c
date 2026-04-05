@@ -1,12 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <conio.h>
-
 #include "../header/File_OC.h"
-#include "../header/file_s.h"
-#include "../header/file_ec.h"
-#include "../header/screen.h"
 
 void openFile(Buffer *ed) {
     printf("Masukkan nama file yang ingin dibuka: ");
