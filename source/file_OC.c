@@ -65,6 +65,32 @@ void closeFile(Buffer *ed) {
         if (lanjut == 'y' || lanjut == 'Y') {
             ed->next = 1;                       // Program terus berjalan
             printLayar(ed, ed->b_now, ed->k_now);
+        } else if (lanjut == 'n' || lanjut == 'N') {
+            ed->next = 0;
+            printf("\nKembali ke menu utama...");
+        } else {
+            printf("\nInput tidak valid.\n");
+            getch();
+            ed->next = 1;
         }
-    } 
+
+    } else if (ed->isSaved == 1) {
+            system("cls");
+            printf("Lanjut edit file atau kembali ke menu utama? (y/n): ");
+            char lanjut = getch();
+
+            if (lanjut == 'y' || lanjut == 'Y') {
+                ed->next = 1;
+                system("cls");
+                printLayar(ed, ed->b_now, ed->k_now);
+            } else if (lanjut == 'n' || lanjut == 'N') {
+                ed->next = 0;
+                printf("\nKembali ke menu utama...");
+            } else {
+                printf("\nInput tidak valid.\n");
+                getch();
+                ed->next = 1;
+            }
+        }
 }
+    
