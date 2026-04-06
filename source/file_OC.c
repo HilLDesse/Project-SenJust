@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <conio.h>
+#include <stdlib.h>
 #include "../header/File_OC.h"
+#include "../header/file_ec.h"
+#include "../header/file_s.h"
+#include "../header/screen.h"
+#include "../header/menu.h" 
 
 void openFile(Buffer *ed) {
     printf("Masukkan nama file yang ingin dibuka: ");
@@ -22,11 +27,8 @@ void openFile(Buffer *ed) {
             ed->isSaved = 1; // 1 artinya file sudah di save
             printf("[Berhasil] file %s dibuka.\n", ed->namaFile); 
 
-            printf("\n--ISI FILE---\n");
-            for(int i = 0;i < ed->total_baris; i++) {
-                printf("\n%s\n", ed->teks[i]); // Menampilkan isi dari file 
-            }
-            printf("---------------\n");
+            printf("\n--- ISI FILE ---");
+            printLayar(ed, ed->b_now, ed->k_now);
 
             printf("Apakah anda ingin mengedit file ini? (y/n): ");
             char edit = getch();
