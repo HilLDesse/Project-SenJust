@@ -14,7 +14,7 @@
 
 static char clipboard[10000] = "";
 
-void gotoXY(int x, int y) {
+void gotoXY(Buffer *buff, int x, int y) {
     COORD coord;
     coord.X = x; 
     coord.Y = y; 
@@ -45,7 +45,7 @@ void cetakHighlight(Buffer *buff, int start_b, int start_k, int end_b, int end_k
         int c_end = (r == b2) ? k2 : len; 
 
         for (int c = c_start; c < c_end; c++) {
-            gotoXY(c, r);
+            gotoXY(buff, c, r);
             // Ubah warna menjadi Background Putih, Text Hitam (Efek Block)
             SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
             printf("%c", buff->teks[r][c]); 
@@ -156,7 +156,6 @@ void moveWordRight(Buffer *buff) {
 // 3. FUNGSI EDITOR UTAMA
 void editorKursor(Buffer *buff)
 {
-    buff->input = getch();
     if (buff->input == -32 || buff->input == 224 || buff->input == 0) 
     {
         buff->arrow = getch(); 
@@ -168,7 +167,7 @@ void editorKursor(Buffer *buff)
             buff->sel_start_b = buff->b_now;
             buff->sel_start_k = buff->k_now;
         }
-        if (buff->arrow == KEY_DELETE) 
+        else if (buff->arrow == KEY_DELETE) 
         {
             if (buff->is_selecting) 
             {
@@ -203,7 +202,7 @@ void editorKursor(Buffer *buff)
         }
         printLayar(buff, buff->b_now, buff->k_now);
         if (buff->is_selecting) cetakHighlight(buff, buff->sel_start_b, buff->sel_start_k, buff->b_now, buff->k_now);
-            gotoXY(buff->k_now, buff->b_now); 
+            gotoXY(buff, buff->k_now, buff->b_now);
     }
     else if (buff->input == 3)
     {
@@ -212,7 +211,7 @@ void editorKursor(Buffer *buff)
             copyText(buff, buff->sel_start_b, buff->sel_start_k);
             buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
             printLayar(buff, buff->b_now, buff->k_now);
-            gotoXY(buff->k_now, buff->b_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
         }
     }
     else if (buff->input == 24)
@@ -223,7 +222,7 @@ void editorKursor(Buffer *buff)
             buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
             buff->isSaved = 0;
             printLayar(buff, buff->b_now, buff->k_now);
-            gotoXY(buff->k_now, buff->b_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
         }
     }
     else if (buff->input == 22)
@@ -236,6 +235,6 @@ void editorKursor(Buffer *buff)
         pasteText(buff);
         buff->isSaved = 0;
         printLayar(buff, buff->b_now, buff->k_now);
-        gotoXY(buff->k_now, buff->b_now);
+        gotoXY(buff, buff->k_now, buff->b_now);
     }
 }

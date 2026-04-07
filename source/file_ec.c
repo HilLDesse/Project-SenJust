@@ -27,7 +27,7 @@ void editFile(Buffer *buff)
 
     system("cls"); 
     printLayar(buff, buff->b_now, buff->k_now); 
-    gotoXY(buff->k_now, buff->b_now);
+    gotoXY(buff, buff->k_now, buff->b_now);
 
     while (1)
     {
@@ -42,7 +42,7 @@ void editFile(Buffer *buff)
             insertHuruf(buff, &buff->b_now, &buff->k_now, buff->input);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
-            gotoXY(buff->k_now, buff->b_now); 
+            gotoXY(buff, buff->k_now, buff->b_now);
         }
         else if (buff->input == 8)  // Input Backspace untuk menghapus karakter
         {
@@ -53,7 +53,7 @@ void editFile(Buffer *buff)
             deleteHuruf(buff, &buff->b_now, &buff->k_now);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
-            gotoXY(buff->k_now, buff->b_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
         }
         else if (buff->input == 13) // Input Enter untuk buat baris baru
         {
@@ -64,7 +64,7 @@ void editFile(Buffer *buff)
             newBaris(buff, &buff->b_now, &buff->k_now);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
-            gotoXY(buff->k_now, buff->b_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
         }
         else if (buff->input == 27) // Tombol ESC
         {
