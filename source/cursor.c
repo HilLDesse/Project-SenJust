@@ -156,145 +156,86 @@ void moveWordRight(Buffer *buff) {
 // 3. FUNGSI EDITOR UTAMA
 void editorKursor(Buffer *buff)
 {
-    int is_selecting = 0;
-    int sel_start_b = -1;
-    int sel_start_k = -1;
-
-    buff->b_now = 0; 
-    buff->k_now = 0; 
-
-    if (buff->total_baris > 0) {
-        buff->b_now = buff->total_baris - 1; 
-        buff->k_now = strlen(buff->teks[buff->b_now]); 
-    } else {
-        buff->total_baris = 1; 
-    }
-
-    system("cls"); 
-    printLayar(buff, buff->b_now, buff->k_now); 
-    gotoXY(buff->k_now, buff->b_now);
-
-    while (1)
+    buff->input = getch();
+    if (buff->input == -32 || buff->input == 224 || buff->input == 0) 
     {
-        buff->input = getch();
-        
-        if (buff->input == -32 || buff->input == 224 || buff->input == 0) 
+        buff->arrow = getch(); 
+        buff->isShiftPressed = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+
+        if (buff->isShiftPressed && !buff->is_selecting) 
         {
-            int arrow = getch(); 
-            int isShiftPressed = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
-
-            if (isShiftPressed && !is_selecting) {
-                is_selecting = 1;
-                sel_start_b = buff->b_now;
-                sel_start_k = buff->k_now;
-            }
-
-            if (arrow == KEY_DELETE) 
+            buff->is_selecting = 1;
+            buff->sel_start_b = buff->b_now;
+            buff->sel_start_k = buff->k_now;
+        }
+        if (buff->arrow == KEY_DELETE) 
+        {
+            if (buff->is_selecting) 
             {
-                if (is_selecting) {
-                    deleteSelection(buff, sel_start_b, sel_start_k);
-                    is_selecting = 0; sel_start_b = -1; sel_start_k = -1;
-                } else {
-                    int old_b = buff->b_now, old_k = buff->k_now;
-                    moveRight(buff);
-                    if (buff->b_now != old_b || buff->k_now != old_k) {
-                        deleteHuruf(buff, &buff->b_now, &buff->k_now);
-                    }
-                }
-                buff->isSaved = 0;
-            } 
-            else 
+                deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
+                buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+            } else 
             {
-                if (!isShiftPressed && is_selecting) {
-                    is_selecting = 0; 
-                    sel_start_b = -1; sel_start_k = -1;
-                }
-
-                switch (arrow) {
-                    case KEY_UP: moveUp(buff); break;
-                    case KEY_DOWN: moveDown(buff); break;
-                    case KEY_LEFT: moveLeft(buff); break;
-                    case KEY_RIGHT: moveRight(buff); break;
-                    case CTRL_LEFT: moveWordLeft(buff); break;
-                    case CTRL_RIGHT: moveWordRight(buff); break;
+                int old_b = buff->b_now, old_k = buff->k_now;
+                moveRight(buff);
+                if (buff->b_now != old_b || buff->k_now != old_k) 
+                {
+                    deleteHuruf(buff, &buff->b_now, &buff->k_now);
                 }
             }
-
-            printLayar(buff, buff->b_now, buff->k_now);
-            if (is_selecting) cetakHighlight(buff, sel_start_b, sel_start_k, buff->b_now, buff->k_now);
+            buff->isSaved = 0;
+        } 
+        else 
+        {
+            if (!buff->isShiftPressed && buff->is_selecting)
+            {
+                buff->is_selecting = 0; 
+                buff->sel_start_b = -1; buff->sel_start_k = -1;
+            }
+            switch (buff->arrow) {
+                case KEY_UP: moveUp(buff); break;
+                case KEY_DOWN: moveDown(buff); break;
+                case KEY_LEFT: moveLeft(buff); break;
+                case KEY_RIGHT: moveRight(buff); break;
+                case CTRL_LEFT: moveWordLeft(buff); break;
+                case CTRL_RIGHT: moveWordRight(buff); break;
+            }
+        }
+        printLayar(buff, buff->b_now, buff->k_now);
+        if (buff->is_selecting) cetakHighlight(buff, buff->sel_start_b, buff->sel_start_k, buff->b_now, buff->k_now);
             gotoXY(buff->k_now, buff->b_now); 
-        }
-        else if (buff->input == 3)
+    }
+    else if (buff->input == 3)
+    {
+        if (buff->is_selecting) 
         {
-            if (is_selecting) {
-                copyText(buff, sel_start_b, sel_start_k);
-                is_selecting = 0; sel_start_b = -1; sel_start_k = -1;
-                printLayar(buff, buff->b_now, buff->k_now);
-                gotoXY(buff->k_now, buff->b_now);
-            }
+            copyText(buff, buff->sel_start_b, buff->sel_start_k);
+            buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+            printLayar(buff, buff->b_now, buff->k_now);
+            gotoXY(buff->k_now, buff->b_now);
         }
-        else if (buff->input == 24)
+    }
+    else if (buff->input == 24)
+    {
+        if (buff->is_selecting) 
         {
-            if (is_selecting) {
-                cutText(buff, sel_start_b, sel_start_k);
-                is_selecting = 0; sel_start_b = -1; sel_start_k = -1;
-                buff->isSaved = 0;
-                printLayar(buff, buff->b_now, buff->k_now);
-                gotoXY(buff->k_now, buff->b_now);
-            }
-        }
-        else if (buff->input == 22)
-        {
-            if (is_selecting) {
-                deleteSelection(buff, sel_start_b, sel_start_k);
-                is_selecting = 0; sel_start_b = -1; sel_start_k = -1;
-            }
-            pasteText(buff);
+            cutText(buff, buff->sel_start_b, buff->sel_start_k);
+            buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
             buff->isSaved = 0;
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff->k_now, buff->b_now);
         }
-        // --- DETEKSI KARAKTER BIASA ---
-        else if (buff->input >= 32 && buff->input <= 126) 
-        { 
-            if (is_selecting) {
-                deleteSelection(buff, sel_start_b, sel_start_k);
-                is_selecting = 0; sel_start_b = -1; sel_start_k = -1;
-            }
-            insertHuruf(buff, &buff->b_now, &buff->k_now, buff->input);
-            printLayar(buff, buff->b_now, buff->k_now);
-            buff->isSaved = 0;
-            gotoXY(buff->k_now, buff->b_now); 
-        }
-        else if (buff->input == 8)  // Backspace
+    }
+    else if (buff->input == 22)
+    {
+        if (buff->is_selecting) 
         {
-            if (is_selecting) {
-                deleteSelection(buff, sel_start_b, sel_start_k);
-                is_selecting = 0; sel_start_b = -1; sel_start_k = -1;
-            } else {
-                deleteHuruf(buff, &buff->b_now, &buff->k_now);
-            }
-            printLayar(buff, buff->b_now, buff->k_now);
-            buff->isSaved = 0;
-            gotoXY(buff->k_now, buff->b_now); 
+            deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
+            buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
         }
-        else if (buff->input == 13) // Enter
-        {
-            if (is_selecting) {
-                deleteSelection(buff, sel_start_b, sel_start_k);
-                is_selecting = 0; sel_start_b = -1; sel_start_k = -1;
-            }
-            newBaris(buff, &buff->b_now, &buff->k_now);
-            printLayar(buff, buff->b_now, buff->k_now);
-            buff->isSaved = 0;
-            gotoXY(buff->k_now, buff->b_now); 
-        }
-        else if (buff->input == 27) // Tombol ESC
-        {
-            break; 
-        }
-        
-        shortcutSave(buff);
-        saveAS(buff);
+        pasteText(buff);
+        buff->isSaved = 0;
+        printLayar(buff, buff->b_now, buff->k_now);
+        gotoXY(buff->k_now, buff->b_now);
     }
 }

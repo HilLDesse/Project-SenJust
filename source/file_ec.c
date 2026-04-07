@@ -11,6 +11,7 @@
 
 void editFile(Buffer *buff)
 {
+    buff->is_selecting = 0;
     buff->next = 1; // program terus berlanjut untuk close file
     buff->b_now = 0; // Posisi baris saat ini
     buff->k_now = 0; // Posisi kolom saat ini
@@ -26,6 +27,7 @@ void editFile(Buffer *buff)
 
     system("cls"); 
     printLayar(buff, buff->b_now, buff->k_now); 
+    gotoXY(buff->k_now, buff->b_now);
 
     while (1)
     {
@@ -33,24 +35,41 @@ void editFile(Buffer *buff)
         
         if (buff->input >= 32 && buff->input <= 126) // Menentukan karakter yang bisa diketik (Huruf, Angka, Spasi)
         { 
+            if (buff->is_selecting) {
+                deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
+                buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+            }
             insertHuruf(buff, &buff->b_now, &buff->k_now, buff->input);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
+            gotoXY(buff->k_now, buff->b_now); 
         }
         else if (buff->input == 8)  // Input Backspace untuk menghapus karakter
         {
+            if (buff->is_selecting) {
+                deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
+                buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+            }
             deleteHuruf(buff, &buff->b_now, &buff->k_now);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
+            gotoXY(buff->k_now, buff->b_now);
         }
         else if (buff->input == 13) // Input Enter untuk buat baris baru
         {
+            if (buff->is_selecting) {
+                deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
+                buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+            }
             newBaris(buff, &buff->b_now, &buff->k_now);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
-        } else if (buff->input == 27) {
+            gotoXY(buff->k_now, buff->b_now);
+        }
+        else if (buff->input == 27) // Tombol ESC
+        {
             closeFile(buff);
-            if (buff->next == 0) {
+            if(buff->next == 0){
                 break;
             }
         }

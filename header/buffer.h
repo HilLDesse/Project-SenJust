@@ -20,6 +20,11 @@ typedef struct
     int next;
     int b_now;
     int k_now;
+    int is_selecting;
+    int sel_start_b;
+    int sel_start_k;
+    int arrow;
+    int isShiftPressed;
 } Buffer;
 
 // Fungsi untuk Buffer
