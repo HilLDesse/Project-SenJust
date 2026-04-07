@@ -7,9 +7,11 @@
 #include "../header/file_s.h"
 #include "../header/file_ec.h"
 #include "../header/cursor.h"
+#include "../header/File_OC.h"
 
 void editFile(Buffer *buff)
 {
+    buff->next = 1; // program terus berlanjut untuk close file
     buff->b_now = 0; // Posisi baris saat ini
     buff->k_now = 0; // Posisi kolom saat ini
 
@@ -46,10 +48,14 @@ void editFile(Buffer *buff)
             newBaris(buff, &buff->b_now, &buff->k_now);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
+        } else if (buff->input == 27) {
+            closeFile(buff);
+            if (buff->next == 0) {
+                break;
+            }
         }
         shortcutSave(buff);
         saveAS(buff);
-
         editorKursor(buff);
     }
 }
