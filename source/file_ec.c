@@ -8,6 +8,7 @@
 #include "../header/file_ec.h"
 #include "../header/cursor.h"
 #include "../header/File_OC.h"
+#include "../header/teks_features.h"
 
 void editFile(Buffer *buff)
 {
@@ -65,6 +66,15 @@ void editFile(Buffer *buff)
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
             gotoXY(buff, buff->k_now, buff->b_now);
+        } 
+        else if(buff->input == 6) // Tombol F (Ctrl+F)
+        {
+            system("cls");
+            findText(buff);
+
+            system("cls");
+            printLayar(buff, buff->b_now, buff->k_now);
+            gotoXY(buff, buff->b_now, buff->k_now);
         }
         else if (buff->input == 27) // Tombol ESC
         {
