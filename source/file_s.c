@@ -6,7 +6,7 @@
 #include "../header/file_ec.h"
 #include "../header/file_s.h"
 #include "../header/buffer.h"
-
+#include "../header/cursor.h"
 
 
 void saveFile(Buffer *buff) 
@@ -51,5 +51,41 @@ void saveAS(Buffer *buff)
         strcpy(buff->namaFile, buff->namaoldFile);
         printf("\nKembali ke file sebelumnya");
         getch();
+    }
+}
+
+void autoSave(Buffer *buff) 
+{
+    if (buff->input == 20) // Tombol Ctrl+T
+    {
+        buff->autoSaveOn = !buff->autoSaveOn; 
+        
+        system("cls"); 
+        if (buff->autoSaveOn == 1) 
+        {
+            printf("Auto Save: ON\n");
+            
+            if (strlen(buff->namaFile) > 0) 
+            {
+                saveFile(buff);
+            }
+        } 
+        else 
+        {
+            printf("Auto Save: OFF\n");
+        }
+        
+        printf("\nTekan tombol apa saja untuk kembali mengedit...");
+        getch(); 
+        
+        system("cls");
+        printLayar(buff, buff->b_now, buff->k_now);
+        
+        gotoXY(buff, buff->k_now, buff->b_now); 
+    }
+
+    if (buff->autoSaveOn == 1 && buff->isSaved == 0 && strlen(buff->namaFile) > 0) 
+    {
+        saveFile(buff);
     }
 }

@@ -85,6 +85,7 @@ void editFile(Buffer *buff)
         }
         shortcutSave(buff);
         saveAS(buff);
+        autoSave(buff);
         editorKursor(buff);
     }
 }

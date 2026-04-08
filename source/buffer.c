@@ -4,6 +4,7 @@
 void initBuffer(Buffer *buff) 
 {
     buff->total_baris = 0; // Set total baris ke 0
+    buff->autoSaveOn = 0; // Set autoSaveOn ke 0 atau mati
 
     for(int i = 0; i < MAX_LINE; i++) 
     {
