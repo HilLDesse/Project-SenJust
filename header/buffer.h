@@ -16,6 +16,7 @@ typedef struct
     char namanewFile[100];
     char namaoldFile[100];
     int isSaved;
+    int autoSaveOn;
     char input;
     int next;
     int b_now;
