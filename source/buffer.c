@@ -21,6 +21,11 @@ void insertHuruf(Buffer *buff, int *baris, int *kolom, char ch)
 {
     int panjang = strlen(buff->teks[*baris]); // Menghitung jumlah karakter di baris saat ini
 
+    if (panjang >= MAX_COL - 1) 
+    {
+        return; // Agar karakter tidak melebihi batas kolom
+    }
+
     for (int i = panjang; i >= *kolom; i--) 
     {
         buff->teks[*baris][i + 1] = buff->teks[*baris][i]; // Menggeser karakter di kanan kursor ke arah kanan
@@ -59,6 +64,11 @@ void deleteHuruf(Buffer *buff, int *baris, int *kolom)
 
 void newBaris(Buffer *buff, int *baris, int *kolom) 
 {
+    if (buff->total_baris >= MAX_LINE) 
+    {
+        return; // Agar tidak melebihi batas baris
+    }
+
     for (int i = buff->total_baris; i > *baris; i--) // Membuat ruang kosong di bawah baris kursor saat ini
     {
         strcpy(buff->teks[i], buff->teks[i - 1]);
