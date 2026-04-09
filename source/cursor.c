@@ -203,7 +203,7 @@ void editorKursor(Buffer *buff)
         if (buff->is_selecting) cetakHighlight(buff, buff->sel_start_b, buff->sel_start_k, buff->b_now, buff->k_now);
         gotoXY(buff, buff->k_now, buff->b_now);
     }
-    else if (buff->input == 3)
+    else if (buff->input == 17)
     {
         if (buff->is_selecting) 
         {
@@ -225,7 +225,7 @@ void editorKursor(Buffer *buff)
             gotoXY(buff, buff->k_now, buff->b_now);
         }
     }
-    else if (buff->input == 22)
+    else if (buff->input == 2)
     {
         recordState(buff);
         if (buff->is_selecting) 
