@@ -9,6 +9,7 @@
 #include "../header/screen.h"
 #include "../header/buffer.h"
 #include "../header/file_s.h"
+#include "../header/undo_redo.h"
 
 #define KEY_DELETE 83 
 
@@ -46,7 +47,6 @@ void cetakHighlight(Buffer *buff, int start_b, int start_k, int end_b, int end_k
 
         for (int c = c_start; c < c_end; c++) {
             gotoXY(buff, c, r);
-            // Ubah warna menjadi Background Putih, Text Hitam (Efek Block)
             SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
             printf("%c", buff->teks[r][c]); 
         }
@@ -134,7 +134,6 @@ void moveDown(Buffer *buff) {
     }
 }
 
-// 2. FUNGSI NAVIGASI CEPAT (CTRL + PANAH)
 void moveWordLeft(Buffer *buff) {
     while (buff->k_now > 0 && isspace(buff->teks[buff->b_now][buff->k_now - 1])) moveLeft(buff);
     while (buff->k_now > 0 && !isspace(buff->teks[buff->b_now][buff->k_now - 1])) moveLeft(buff);
@@ -153,7 +152,6 @@ void moveWordRight(Buffer *buff) {
     }
 }
 
-// 3. FUNGSI EDITOR UTAMA
 void editorKursor(Buffer *buff)
 {
     if (buff->input == -32 || buff->input == 224 || buff->input == 0) 
@@ -169,6 +167,7 @@ void editorKursor(Buffer *buff)
         }
         else if (buff->arrow == KEY_DELETE) 
         {
+            recordState(buff);
             if (buff->is_selecting) 
             {
                 deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
@@ -202,7 +201,7 @@ void editorKursor(Buffer *buff)
         }
         printLayar(buff, buff->b_now, buff->k_now);
         if (buff->is_selecting) cetakHighlight(buff, buff->sel_start_b, buff->sel_start_k, buff->b_now, buff->k_now);
-            gotoXY(buff, buff->k_now, buff->b_now);
+        gotoXY(buff, buff->k_now, buff->b_now);
     }
     else if (buff->input == 3)
     {
@@ -218,6 +217,7 @@ void editorKursor(Buffer *buff)
     {
         if (buff->is_selecting) 
         {
+            recordState(buff);
             cutText(buff, buff->sel_start_b, buff->sel_start_k);
             buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
             buff->isSaved = 0;
@@ -227,6 +227,7 @@ void editorKursor(Buffer *buff)
     }
     else if (buff->input == 22)
     {
+        recordState(buff);
         if (buff->is_selecting) 
         {
             deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
@@ -234,6 +235,18 @@ void editorKursor(Buffer *buff)
         }
         pasteText(buff);
         buff->isSaved = 0;
+        printLayar(buff, buff->b_now, buff->k_now);
+        gotoXY(buff, buff->k_now, buff->b_now);
+    }
+    else if (buff->input == 26) // CTRL + Z
+    {
+        undo(buff);
+        printLayar(buff, buff->b_now, buff->k_now);
+        gotoXY(buff, buff->k_now, buff->b_now);
+    }
+    else if (buff->input == 25) // CTRL + Y
+    {
+        redo(buff);
         printLayar(buff, buff->b_now, buff->k_now);
         gotoXY(buff, buff->k_now, buff->b_now);
     }

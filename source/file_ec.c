@@ -9,6 +9,7 @@
 #include "../header/cursor.h"
 #include "../header/File_OC.h"
 #include "../header/teks_features.h"
+#include "../header/undo_redo.h"
 
 void editFile(Buffer *buff)
 {
@@ -36,6 +37,7 @@ void editFile(Buffer *buff)
         
         if (buff->input >= 32 && buff->input <= 126) // Menentukan karakter yang bisa diketik (Huruf, Angka, Spasi)
         { 
+            recordState(buff);
             if (buff->is_selecting) {
                 deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
                 buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
@@ -47,6 +49,7 @@ void editFile(Buffer *buff)
         }
         else if (buff->input == 8)  // Input Backspace untuk menghapus karakter
         {
+            recordState(buff);
             if (buff->is_selecting) {
                 deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
                 buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
@@ -58,6 +61,7 @@ void editFile(Buffer *buff)
         }
         else if (buff->input == 13) // Input Enter untuk buat baris baru
         {
+            recordState(buff);
             if (buff->is_selecting) {
                 deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
                 buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
