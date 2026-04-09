@@ -9,7 +9,7 @@
 #include "../header/menu.h" 
 
 void openFile(Buffer *ed) {
-    printf("Masukkan nama file yang ingin dibuka: ");
+    printf("Input nama file yang ingin dibuka (pakai format .txt):  ");
     fgets(ed->namaFile, 100, stdin);
     ed->namaFile[strcspn(ed->namaFile, "\n")] = 0;
 
@@ -25,20 +25,25 @@ void openFile(Buffer *ed) {
 
             fclose(file);
             ed->isSaved = 1; // 1 artinya file sudah di save
-            printf("[Berhasil] file %s dibuka.\n", ed->namaFile); 
 
-            printf("\n--- ISI FILE ---");
             printLayar(ed, ed->b_now, ed->k_now);
+            printf("\nFile %s berhasil dimuat.\n", ed->namaFile);
 
             printf("Apakah anda ingin mengedit file ini? (y/n): ");
             char edit = getch();
             if (edit == 'y' || edit == 'Y') {
                 editFile(ed);
+            } 
+            else if (edit == 'n' || edit == 'N') {
+                printf("\nAnda memilih untuk tidak mengedit. Kembali ke menu utama...");
+                getch();
             }
-
+            
     } else {
         printf("[ERROR] File tidak ditemukan!\n");
+        printf("Tekan tombol apa saja untuk keluar...");
         ed->namaFile[0] = '\0';  // untuk stop membaca file 
+        getch();
     }
 }
 
