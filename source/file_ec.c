@@ -105,35 +105,36 @@ void createFile(Buffer *buff)
 {
     nama_file:
     printf("\nMasukkan nama file yang ingin dibuat (contoh: tugas.txt): "); 
-    fgets(buff->namaFile, 100, stdin); // Mengambil input nama file dari user
-    buff->namaFile[strcspn(buff->namaFile, "\n")] = 0; // Menghapus /n dan menggantingan dengan 0 
+    fgets(buff->namaFile, 100, stdin); 
+    buff->namaFile[strcspn(buff->namaFile, "\n")] = 0; 
 
-    FILE *cekFile = fopen(buff->namanewFile, "r");
+    FILE *cekFile = fopen(buff->namaFile, "r"); 
     if (cekFile != NULL)
-        {
-            fclose(cekFile);
-            
-            printf("\n[PERINGATAN] File sudah ada\n");
-            goto nama_file; // Lompat kembali ke atas
-
+    {
+        fclose(cekFile);
+        printf("\n[PERINGATAN] File sudah ada!\n");
+        goto nama_file;
     }
-    FILE *file = fopen(buff->namaFile, "w"); // Membuka file dengan mode write
-    
-    if (file != NULL) {
+
+    FILE *file = fopen(buff->namaFile, "w");
+    if (file != NULL) 
+    {
         for (int i = 0; i < buff->total_baris; i++) {
             fprintf(file, "%s\n", buff->teks[i]);
         }
     
+        fclose(file); 
+    
         printf("File '%s' sukses dibuat!\n", buff->namaFile);
         buff->isSaved = 1; 
     
-    
-        printf("Tekan enter untuk menanjutkan edit file '%s' \n", buff->namaFile);
+        printf("Tekan enter untuk melanjutkan edit file '%s' \n", buff->namaFile);
         getch();
         editFile(buff);
     } 
     else
     {
         printf("Gagal membuat file!\n");
+        getch();
     }
 }
