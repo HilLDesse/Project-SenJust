@@ -107,6 +107,16 @@ void createFile(Buffer *buff)
     fgets(buff->namaFile, 100, stdin); // Mengambil input nama file dari user
     buff->namaFile[strcspn(buff->namaFile, "\n")] = 0; // Menghapus /n dan menggantingan dengan 0 
 
+    nama_file:
+    FILE *cekFile = fopen(buff->namanewFile, "r");
+    if (cekFile != NULL)
+        {
+            fclose(cekFile);
+            
+            printf("\n[PERINGATAN] File sudah ada\n");
+            goto nama_file; // Lompat kembali ke atas
+
+    }
     FILE *file = fopen(buff->namaFile, "w"); // Membuka file dengan mode write
     
     if (file != NULL) {
