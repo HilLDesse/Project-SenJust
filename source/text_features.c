@@ -35,3 +35,18 @@ void findText(Buffer *ed) {
     printf("\nTekan tombol apapun untuk kembali ke menu...");
     getch();
 }
+
+void NumberList(Buffer *ed, int angka_sebelumnya) {
+    newBaris(ed, &ed->b_now, &ed->k_now);
+
+    char nomorBaru[20];
+    sprintf(nomorBaru, "%d. ", angka_sebelumnya + 1);
+    
+    char teks_sementara[MAX_COL];
+    strcpy(teks_sementara, nomorBaru);
+    strcat(teks_sementara, ed->teks[ed->b_now]);
+
+    strcpy(ed->teks[ed->b_now], teks_sementara);
+
+    ed->k_now = strlen(nomorBaru);
+}

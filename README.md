@@ -18,9 +18,9 @@ Aplikasi Text Editor berbasis **Terminal** dan menggunakan **bahasa C**
 
 Sebelum menjalankan program , siapkan environment berikut pada sistem :
 
-- **C Compiler**
+- **C Compiler (via MinGW)**
 - **Git**
-- **Terminal**
+- **Terminal/CLI**
 
 1. **Clone Repositori:**
 
@@ -38,29 +38,80 @@ Pastikan GCC sudah terinstal dengan benar:
 gcc --version
 ```
 
-3. **Compile Program:**
+3. **Masuk ke folder project:**
 
 Compile program dengan :
 
 ```bash
-🔒 Belum Tersedia
+cd Project-SenJust
 ```
 
 ---
 
 ## ♣️ Installation
 
-> 🔒 **Belum tersedia**
+Install terlebih dahulu GCC via **MinGW** 
+
+1. Download MinGW dari link berikut : https://www.mingw-w64.org/
+2. Install Compiler tersebut dan Ikuti Langkah-langkah yang ada.
+3. Verifikasi Instalasi
+
+```bash
+gcc --version 
+```
+
 
 ---
 
 ## ♦️ Tutorial Penggunaan Aplikasi
 
-> 🔒 **Belum tersedia**
+1. **Compile Program**
+Masuk ke folder file .c (source), lalu compile menggunakan CLI:
+
+```bash
+gcc main.c menu.c screen.c file_s.c file_OC.c file_ec.c cursor.c buffer.c text_features.c undo_redo.c -o aplikasi 
+```
+
+2. **Jalankan Program**
+
+```bash
+aplikasi.exe
+```
 
 ---
 
-## 🔗 GitHub Repository
+## Penggunaan Fitur
+
+1. Menu Utama 
+Saat pertama kali program dibuka, akan ada tampilan menu utama: 
+
+```bash
+=======================================
+         SEN'JUST TEXT EDITOR          
+=======================================
+1. Buat File Baru
+2. Buka File
+3. Shortcuts
+4. Credit
+5. Keluar
+=======================================
+Pilih menu (1-5): 
+```
+Pilih menu yang anda inginkan dengan input angka 1-5 di keyboard.
+
+2. Buat File Baru (Angka 1)
+
+Membuat file baru dengan menginputkan nama file yang akan dibuat:
+
+```bash
+Masukkan nama file yang ingin dibuat (contoh: tugas.txt):
+```
+
+
+
+
+
+## 🔗 GitHub Repository 
 
 > https://github.com/HilLDesse/Project-SenJust.git
 

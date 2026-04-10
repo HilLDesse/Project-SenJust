@@ -4,7 +4,6 @@
 #include "buffer.h"
 
 void findText(Buffer *ed);
-void gotoLine(Buffer *ed);
-
+void NumberList(Buffer *ed, int angka_sebelumnya);
 
 #endif
