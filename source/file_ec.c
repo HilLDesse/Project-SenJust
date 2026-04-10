@@ -103,11 +103,11 @@ void editFile(Buffer *buff)
 
 void createFile(Buffer *buff)
 {
+    nama_file:
     printf("\nMasukkan nama file yang ingin dibuat (contoh: tugas.txt): "); 
     fgets(buff->namaFile, 100, stdin); // Mengambil input nama file dari user
     buff->namaFile[strcspn(buff->namaFile, "\n")] = 0; // Menghapus /n dan menggantingan dengan 0 
 
-    nama_file:
     FILE *cekFile = fopen(buff->namanewFile, "r");
     if (cekFile != NULL)
         {
