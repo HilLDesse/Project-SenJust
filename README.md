@@ -82,7 +82,8 @@ aplikasi.exe
 
 ## Penggunaan Fitur
 
-1. Menu Utama 
+1. **Menu Utama**
+
 Saat pertama kali program dibuka, akan ada tampilan menu utama: 
 
 ```bash
@@ -99,7 +100,7 @@ Pilih menu (1-5):
 ```
 Pilih menu yang anda inginkan dengan input angka 1-5 di keyboard.
 
-2. Buat File Baru (Angka 1)
+2. **Buat File Baru (Angka 1)**
 
 Membuat file baru dengan menginputkan nama file yang akan dibuat:
 
@@ -107,8 +108,45 @@ Membuat file baru dengan menginputkan nama file yang akan dibuat:
 Masukkan nama file yang ingin dibuat (contoh: tugas.txt):
 ```
 
+3. **Open File (Angka 2)**
 
+Membuka file teks yang sudah tersimpan di lokal:
 
+```bash
+Input nama file yang ingin dibuka (pakai format .txt): 
+```
+
+4. **Shortcut (Angka 3)**
+
+Menampilkan shortcut apa saja yang ada dalam aplikasi, dan penerapannya pada saat edit file.
+
+```bash
++=============================================================================+
+|                  * * * SHORTCUT SEN'JUST TEXT EDITOR * * * |
++=============================================================================+
+|                                                                             |
+|    CTRL + Q       : Copy teks yang di highlight                             |
+|    CTRL + X       : Cut teks yang di highlight                              |
+|    CTRL + B       : Paste teks yang sudah di copy                           |
+|    CTRL + S       : Simpan File (Save)                                      |
+|    CTRL + A       : Simpan dengan nama baru (Save As)                       |
+|    CTRL + T       : Nyala / Matikan fitur AutoSave                          |
+|    CRTL + Z       : Undo (Membatalkan aksi terakhir)                        |
+|    CTRL + Y       : Redo (Mengembalikan aksi yang sudah di-undo)            |
+|    ESC            : Keluar dari Editor / Tutup File                         |
+|    CTRL + F       : Cari Teks (Find)                                        |
+|    Tombol Panah   : Memindahkan Kursor (Atas/Bawah/Kiri/Kanan)              |
+|    CTRL + Panah   : Memindahkan Kursor per kata (Word jump)                 |
+|    SHIFT + Panah  : Memblok / Sorot Teks (Highlight)                        |
+|                                                                             |
++=============================================================================+
+```
+
+5. **Credit (Angka 4)**
+
+Menampilkan Biodata pembuat Text editor.
+
+6. **Keluar Aplikasi (Angka 5)**
 
 
 ## 🔗 GitHub Repository 
