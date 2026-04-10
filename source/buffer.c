@@ -14,7 +14,11 @@ void initBuffer(Buffer *buff)
 
 void addBaris(Buffer *buff, char *input)
 {
-    strcpy(buff->teks[buff->total_baris], input); // Menyalin string dari input ke baris paling akhir yang tersedia di array
+    if (buff->total_baris >= MAX_LINE) {
+        return; // Hentikan penambahan baris
+    }
+    strncpy(buff->teks[buff->total_baris], input, MAX_COL - 1); // Salin input ke baris saat ini dengan batas maksimal kolom
+    buff->teks[buff->total_baris][MAX_COL - 1] = '\0';
     buff->total_baris++; 
 }
 
@@ -50,16 +54,39 @@ void deleteHuruf(Buffer *buff, int *baris, int *kolom)
     else if (*baris > 0)
     {
         int long_atas = strlen(buff->teks[*baris - 1]); // Mencari panjang baris atas 
+        int long_bawah = strlen(buff->teks[*baris]); // Mencari panjang baris bawah
+        int kapasitas_sisa = (MAX_COL - 1) - long_atas; // Menghitung kapasitas sisa di baris atas 
 
-        strcat(buff->teks[*baris - 1], buff->teks[*baris]); // Menggabungkan teks baris saat ini ke ujung baris atas
-
-        for (int i = *baris; i < buff->total_baris; i++)
+        if (long_bawah <= kapasitas_sisa) 
         {
-            strcpy(buff->teks[i], buff->teks[i + 1]); // Menggeser baris di bawahnya naik ke atas
+            strcat(buff->teks[*baris - 1], buff->teks[*baris]); 
+            for (int i = *baris; i < buff->total_baris - 1; i++) 
+            {
+                strcpy(buff->teks[i], buff->teks[i + 1]); 
+            }
+            
+            memset(buff->teks[buff->total_baris - 1], 0, MAX_COL);
+
+            buff->total_baris--;
+            (*baris)--;
+            *kolom = long_atas;
+        } 
+        else if (kapasitas_sisa > 0)
+        {
+            strncat(buff->teks[*baris - 1], buff->teks[*baris], kapasitas_sisa);
+            int sisa_panjang = long_bawah - kapasitas_sisa;
+            for (int i = 0; i <= sisa_panjang; i++) 
+            {
+                buff->teks[*baris][i] = buff->teks[*baris][i + kapasitas_sisa]; 
+            }
+            (*baris)--;
+            *kolom = long_atas;
         }
-        buff->total_baris--;
-        (*baris)--;
-        *kolom = long_atas;
+        else 
+        {
+            (*baris)--;
+            *kolom = long_atas;
+        }
     }
 }
 
