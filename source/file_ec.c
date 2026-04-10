@@ -61,12 +61,19 @@ void editFile(Buffer *buff)
         }
         else if (buff->input == 13) // Input Enter untuk buat baris baru
         {
+            int deteksi_angka = 0;
             recordState(buff);
             if (buff->is_selecting) {
                 deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
                 buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
             }
-            newBaris(buff, &buff->b_now, &buff->k_now);
+
+            if (sscanf(buff->teks[buff->b_now], "%d. ", &deteksi_angka) == 1) {
+                NumberList(buff, deteksi_angka);
+            } else {
+                newBaris(buff, &buff->b_now, &buff->k_now);
+            }
+
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
             gotoXY(buff, buff->k_now, buff->b_now);

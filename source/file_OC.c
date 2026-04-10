@@ -37,6 +37,9 @@ void openFile(Buffer *ed) {
             else if (edit == 'n' || edit == 'N') {
                 printf("\nAnda memilih untuk tidak mengedit. Kembali ke menu utama...");
                 getch();
+            } else {
+                printf("\nInput tidak valid. Kembali ke menu utama...");
+                getch();
             }
             
     } else {
