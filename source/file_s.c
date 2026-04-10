@@ -43,13 +43,55 @@ void saveAS(Buffer *buff)
     {
         system("cls");
         strcpy(buff->namaoldFile, buff->namaFile);
+        input_nama_file: 
         printf("Masukkan nama file baru: ");
         fgets(buff->namanewFile, 100, stdin); // Mengambil input nama file dari user
         buff->namanewFile[strcspn(buff->namanewFile, "\n")] = 0; // Menghapus /n dan menggantingan dengan 0 
+        if (strcmp(buff->namanewFile, buff->namaoldFile) == 0) 
+        {
+            printf("\n[PERINGATAN] Nama file baru tidak boleh sama!\n\n");
+            goto input_nama_file; // Lompat kembali ke atas
+        } 
+        else if (strlen(buff->namanewFile) == 0) 
+        {
+            printf("\n[PERINGATAN] Nama file tidak boleh kosong!\n\n");
+            goto input_nama_file; // Lompat kembali ke atas
+        }
+
+        FILE *cekFile = fopen(buff->namanewFile, "r");
+        if (cekFile != NULL)
+        {
+            fclose(cekFile);
+            
+            printf("\n[PERINGATAN] File '%s' sudah ada\n", buff->namanewFile);
+            goto input_nama_file; // Lompat kembali ke atas
+
+        }
+
         strcpy(buff->namaFile, buff->namanewFile); // Menyalin file lama ke file baru
         saveFile(buff); // Menyimpan file dengan nama baru
-        strcpy(buff->namaFile, buff->namaoldFile);
-        printf("\nKembali ke file sebelumnya");
+        printf("\nFile berhasil disimpan\n");
+        printf("Tekan 1 untuk edit file baru dan tekan 2 untuk edit file lama: ");
+
+        input_pilihan: 
+        printf("Pilihan: ");
+        char pilihan = getch();
+        if (pilihan == '1') 
+        {
+            printf("\n\nMembuka file '%s'...\n", buff->namaFile);
+        } 
+        else if (pilihan == '2') 
+        {
+            strcpy(buff->namaFile, buff->namaoldFile);
+            printf("\n\nKembali ke file '%s'...\n", buff->namaFile);
+        }
+        else 
+        {
+            printf("\nPilihan tidak valid, tekan 1 atau 2\n");
+            goto input_pilihan; // Lompat kembali ke pilihan
+        }
+        
+        printf("Tekan tombol apapun untuk melanjutkan...");
         getch();
     }
 }
