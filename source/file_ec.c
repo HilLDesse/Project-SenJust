@@ -4,136 +4,109 @@
 #include <string.h>
 
 #include "../header/screen.h"
-#include "../header/file_s.h"
 #include "../header/file_ec.h"
-#include "../header/cursor.h"
-#include "../header/File_OC.h"
-#include "../header/teks_features.h"
-#include "../header/undo_redo.h"
+#include "../header/file_s.h"
+#include "../header/buffer.h"
 
-void editFile(Buffer *buff)
-{
-    buff->is_selecting = 0;
-    buff->next = 1; // program terus berlanjut untuk close file
-    buff->b_now = 0; // Posisi baris saat ini
-    buff->k_now = 0; // Posisi kolom saat ini
+void editFile(Buffer *buff) {
 
-    if (buff->total_baris > 0) {
-        buff->b_now = buff->total_baris - 1; // Lompat ke baris terbawah
-        buff->k_now = strlen(buff->teks[buff->b_now]); // Lompat ke ujung kanan teks
+    if (buff->head == NULL) { // Jika buffer kosong, buat node pertama untuk memulai pengeditan
+        Node *nodeAwal = buatNode();
+
+        if (nodeAwal == NULL) {
+            printf("Gagal inisialisasi buffer!\n");
+            return;
+        }
+
+        buff->head = buff->tail = buff->current = nodeAwal;
+        buff->total_baris = 1;
+        buff->b_now = 0;
+        buff->k_now = 0;
+        
+    } else { // Jika buffer sudah memiliki data, set posisi kursor ke akhir teks di baris terakhir
+        buff->current = buff->tail;
+        buff->b_now   = buff->total_baris - 1;
+        buff->k_now   = strlen(buff->current->teks);
     }
-    else
-    {
-        buff->total_baris = 1; // Jika file baru/kosong siapkan 1 baris
-    }
-
-    system("cls"); 
-    printLayar(buff, buff->b_now, buff->k_now); 
-    gotoXY(buff, buff->k_now, buff->b_now);
+    printLayar(buff, buff->b_now, buff->k_now);
 
     while (1)
     {
         buff->input = getch();
-        
-        if (buff->input >= 32 && buff->input <= 126) // Menentukan karakter yang bisa diketik (Huruf, Angka, Spasi)
-        { 
-            recordState(buff);
-            if (buff->is_selecting) {
-                deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
-                buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
-            }
-            insertHuruf(buff, &buff->b_now, &buff->k_now, buff->input);
+
+        if (buff->input >= 32 && buff->input <= 126) // Karakter yang bisa dicetak
+        {
+            insertHuruf(buff, (char)buff->input);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
-            gotoXY(buff, buff->k_now, buff->b_now);
         }
-        else if (buff->input == 8)  // Input Backspace untuk menghapus karakter
+        else if (buff->input == 8)   // Backspace
         {
-            recordState(buff);
-            if (buff->is_selecting) {
-                deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
-                buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
-            }
-            deleteHuruf(buff, &buff->b_now, &buff->k_now);
+            deleteHuruf(buff);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
-            gotoXY(buff, buff->k_now, buff->b_now);
         }
-        else if (buff->input == 13) // Input Enter untuk buat baris baru
+        else if (buff->input == 13)  // Enter
         {
-            int deteksi_angka = 0;
-            recordState(buff);
-            if (buff->is_selecting) {
-                deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
-                buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
-            }
-
-            if (sscanf(buff->teks[buff->b_now], "%d. ", &deteksi_angka) == 1) {
-                NumberList(buff, deteksi_angka);
-            } else {
-                newBaris(buff, &buff->b_now, &buff->k_now);
-            }
-
+            newBaris(buff);
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
-            gotoXY(buff, buff->k_now, buff->b_now);
-        } 
-        else if(buff->input == 6) // Tombol F (Ctrl+F)
-        {
-            system("cls");
-            findText(buff);
-
-            system("cls");
-            printLayar(buff, buff->b_now, buff->k_now);
-            gotoXY(buff, buff->b_now, buff->k_now);
         }
-        else if (buff->input == 27) // Tombol ESC
+        else if (buff->input == 19) // Save File (Ctrl+S)
         {
-            closeFile(buff);
-            if(buff->next == 0){
-                break;
-            }
+            saveFile(buff);
+            buff->isSaved = 1;
         }
-        shortcutSave(buff);
-        saveAS(buff);
-        autoSave(buff);
-        editorKursor(buff);
     }
 }
 
 void createFile(Buffer *buff)
 {
-    nama_file:
-    printf("\nMasukkan nama file yang ingin dibuat (contoh: tugas.txt): "); 
-    fgets(buff->namaFile, 100, stdin); 
-    buff->namaFile[strcspn(buff->namaFile, "\n")] = 0; 
+    while (1) {
+        printf("\nMasukkan nama file yang ingin dibuat (contoh: tugas.txt): ");
+        fgets(buff->namaFile, 100, stdin);
+        buff->namaFile[strcspn(buff->namaFile, "\n")] = 0;
 
-    FILE *cekFile = fopen(buff->namaFile, "r"); 
-    if (cekFile != NULL)
-    {
-        fclose(cekFile);
-        printf("\n[PERINGATAN] File sudah ada!\n");
-        goto nama_file;
+        if (strlen(buff->namaFile) == 0) {
+            printf("[PERINGATAN] Nama file tidak boleh kosong!\n");
+            continue;
+        }
+
+        FILE *cekFile = fopen(buff->namaFile, "r");
+        if (cekFile != NULL) {
+            fclose(cekFile);
+            printf("\n[PERINGATAN] File '%s' sudah ada! Gunakan nama lain.\n",
+                   buff->namaFile);
+            continue;
+        }
+
+        break;
     }
 
     FILE *file = fopen(buff->namaFile, "w");
-    if (file != NULL) 
+    if (file != NULL)
     {
-        for (int i = 0; i < buff->total_baris; i++) {
-            fprintf(file, "%s\n", buff->teks[i]);
+        Node *node = buff->head;
+        while (node != NULL) {
+            if (node->teks == NULL) { // Hindari dereference NULL jika node tidak lengkap
+                node = node->next;
+                continue;
+            }
+            fprintf(file, "%s\n", node->teks);
+            node = node->next;
         }
-    
-        fclose(file); 
-    
+        fclose(file);
+
         printf("File '%s' sukses dibuat!\n", buff->namaFile);
-        buff->isSaved = 1; 
-    
-        printf("Tekan enter untuk melanjutkan edit file '%s' \n", buff->namaFile);
+        buff->isSaved = 1;
+
+        printf("Tekan tombol apa saja untuk mulai mengedit...\n");
         getch();
         editFile(buff);
-    } 
+    }
     else
     {
+        perror("fopen");
         printf("Gagal membuat file!\n");
         getch();
     }

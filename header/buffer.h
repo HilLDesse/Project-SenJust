@@ -30,7 +30,6 @@ typedef struct {
 Node *buatNode();                         // Membuat node baru dengan string kosong
 void freeList(Node **head);                // Membebaskan memori yang digunakan oleh seluruh node
 void initBuffer(Buffer *buff);            // Menginisialisasi buffer dengan node pertama
-void addBaris(Buffer *buff, char *input); // Menambahkan baris baru dengan isi dari input
 void insertHuruf(Buffer *buff, char ch);  // Menyisipkan karakter di posisi kursor saat ini
 void deleteHuruf(Buffer *buff);           // Menghapus karakter di posisi kursor saat ini
 void newBaris(Buffer *buff);              // Menambahkan baris baru di bawah baris saat ini

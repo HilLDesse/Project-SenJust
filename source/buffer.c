@@ -64,42 +64,19 @@ void initBuffer(Buffer *buff) {
     buff->namaFile[0] = '\0';
 }
 
-void addBaris(Buffer *buff, char *input) {
-
-    Node *nodeBaru = buatNode(); // Buat node baru untuk baris yang akan ditambahkan
-    int panjang = strlen(input); // Hitung panjang input untuk alokasi memori yang tepat
-    char *temp = (char *)realloc(nodeBaru->teks, panjang + 1); // Alokasi memori untuk teks baru
-    
-    if (temp == NULL) {
-        printf("Gagal alokasi memori!\n");
-        free(nodeBaru->teks);
-        free(nodeBaru);
-        return;
-    }
-
-    nodeBaru->teks = temp;
-    strncpy(nodeBaru->teks, input, panjang); // Salin input ke node baru
-    nodeBaru->teks[panjang] = '\0'; // Pastikan string diakhiri dengan null terminator
-    nodeBaru->prev = buff->tail;
-    nodeBaru->next = NULL;
-
-    if (buff->tail != NULL) {
-        buff->tail->next = nodeBaru; // Sambungkan node baru ke akhir list
-    } else {
-        buff->head = nodeBaru; // Jika list kosong, set head ke node baru
-    }
-
-    buff->tail = nodeBaru;
-    buff->total_baris++;
-}
-
 void insertHuruf(Buffer *buff, char ch) {
 
     if (buff->current == NULL){
         return;
     }
 
-    int panjangLama = strlen(buff->current->teks); // Hitung panjang teks saat ini untuk alokasi memori baru
+    /* Pastikan posisi kursor valid */
+    size_t lenCurr = strlen(buff->current->teks);
+    if ((size_t)buff->k_now > lenCurr) {
+        buff->k_now = (int)lenCurr;
+    }
+
+    int panjangLama = (int)lenCurr; // Hitung panjang teks saat ini untuk alokasi memori baru
     int panjangBaru = panjangLama + 1;
     char *temp = (char *)realloc(buff->current->teks, panjangBaru + 1); // Alokasi memori untuk teks baru setelah penambahan karakter
 
@@ -127,8 +104,14 @@ void deleteHuruf(Buffer *buff) {
         return;
     }
 
+    /* Pastikan posisi kursor valid */
+    size_t lenCurr = strlen(buff->current->teks);
+    if ((size_t)buff->k_now > lenCurr) {
+        buff->k_now = (int)lenCurr;
+    }
+
     if (buff->k_now > 0) { // Jika kursor tidak di awal baris, hapus karakter di posisi kursor
-        int panjang = strlen(buff->current->teks);
+        int panjang = (int)lenCurr;
         int i = buff->k_now;
 
         while (i <= panjang) { // Geser karakter ke kiri untuk menutup ruang setelah penghapusan karakter
@@ -137,7 +120,7 @@ void deleteHuruf(Buffer *buff) {
         }
 
         buff->k_now--; // Geser kursor ke kiri setelah penghapusan karakter
-        int ukBaru = panjang; // Hitung panjang baru setelah penghapusan karakter
+        int ukBaru = panjang; // ukuran baru termasuk null terminator
         char *temp = (char *)realloc(buff->current->teks, ukBaru); // Alokasi memori baru untuk teks setelah penghapusan karakter
         
         if (temp != NULL){ // Jika alokasi memori berhasil, update pointer teks ke memori baru
@@ -172,7 +155,12 @@ void deleteHuruf(Buffer *buff) {
         
         buff->total_baris--;
         buff->current = barisAtas;
-        buff->b_now--;
+        /* Pastikan posisi baris tidak negatif dan perbarui posisi kursor */
+        if (buff->b_now > 0) {
+            buff->b_now--;
+        } else {
+            buff->b_now = 0;
+        }
         buff->k_now = panjangAtas;
     }
 }
@@ -181,6 +169,12 @@ void newBaris(Buffer *buff) {
 
     if (buff->current == NULL){ 
         return;
+    }
+
+    /* Pastikan posisi kursor valid */
+    size_t lenCurr = strlen(buff->current->teks);
+    if ((size_t)buff->k_now > lenCurr) {
+        buff->k_now = (int)lenCurr;
     }
 
     Node *nodeBaru = buatNode();
