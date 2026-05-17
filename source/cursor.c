@@ -10,10 +10,9 @@
 #include "../header/buffer.h"
 #include "../header/file_s.h"
 #include "../header/undo_redo.h"
+#include "../header/clipboard.h"
 
 #define KEY_DELETE 83 
-
-static char clipboard[10000] = "";
 
 void gotoXY(Buffer *buff, int x, int y) {
     COORD coord;
@@ -33,164 +32,182 @@ void getSelectionBounds(int *b1, int *k1, int *b2, int *k2, int b_now, int k_now
 }
 
 void cetakHighlight(Buffer *buff, int start_b, int start_k, int end_b, int end_k) {
-    if (start_b == -1) return;
+    // Jika tidak ada seleksi atau buffer kosong, batalkan
+    if (start_b == -1 || buff->head == NULL) return; 
 
     int b1, k1, b2, k2;
     getSelectionBounds(&b1, &k1, &b2, &k2, end_b, end_k, start_b, start_k);
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    for (int r = b1; r <= b2; r++) {
-        int len = strlen(buff->teks[r]);
+    // 1. Traversal: Jalan-jalan ke node awal baris yang diblok (b1)
+    Node *curr = buff->head;
+    for (int i = 0; i < b1 && curr != NULL; i++) {
+        curr = curr->next;
+    }
+
+    // 2. Loop mewarnai per baris (berjalan menggunakan curr = curr->next)
+    for (int r = b1; r <= b2 && curr != NULL; r++) {
+        int len = strlen(curr->teks);
         int c_start = (r == b1) ? k1 : 0;
         int c_end = (r == b2) ? k2 : len; 
 
+        // Mewarnai karakter dari titik c_start sampai c_end
         for (int c = c_start; c < c_end; c++) {
             gotoXY(buff, c, r);
             SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
-            printf("%c", buff->teks[r][c]); 
+            printf("%c", curr->teks[c]); 
         }
+        
+        curr = curr->next; // Pindah ke node baris selanjutnya
     }
+    
+    // Kembalikan warna terminal ke standar (Teks putih, background hitam)
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
-
-void copyText(Buffer *buff, int sel_b, int sel_k) {
-    int b1, k1, b2, k2;
-    getSelectionBounds(&b1, &k1, &b2, &k2, buff->b_now, buff->k_now, sel_b, sel_k);
-    
-    int clipIndex = 0;
-    clipboard[0] = '\0'; 
-    
-    for (int r = b1; r <= b2; r++) {
-        int len = strlen(buff->teks[r]);
-        int c_start = (r == b1) ? k1 : 0;
-        int c_end = (r == b2) ? k2 : len;
-        
-        for (int c = c_start; c < c_end; c++) {
-            clipboard[clipIndex++] = buff->teks[r][c];
-        }
-        if (r < b2) clipboard[clipIndex++] = '\n';
-    }
-    clipboard[clipIndex] = '\0'; 
-}
-
-void deleteSelection(Buffer *buff, int sel_b, int sel_k) {
-    int b1, k1, b2, k2;
-    getSelectionBounds(&b1, &k1, &b2, &k2, buff->b_now, buff->k_now, sel_b, sel_k);
-    
-    buff->b_now = b2;
-    buff->k_now = k2;
-    
-    while (buff->b_now > b1 || (buff->b_now == b1 && buff->k_now > k1)) {
-        deleteHuruf(buff, &buff->b_now, &buff->k_now);
-    }
-}
-
-void cutText(Buffer *buff, int sel_b, int sel_k) {
-    copyText(buff, sel_b, sel_k); 
-    deleteSelection(buff, sel_b, sel_k); 
-}
-
-void pasteText(Buffer *buff) {
-    for (int i = 0; clipboard[i] != '\0'; i++) {
-        if (clipboard[i] == '\n') {
-            newBaris(buff, &buff->b_now, &buff->k_now);
-        } else {
-            insertHuruf(buff, &buff->b_now, &buff->k_now, clipboard[i]);
-        }
-    }
-}
-
 void moveLeft(Buffer *buff) {
-    if (buff->k_now > 0) buff->k_now--; 
-    else if (buff->b_now > 0) { 
+    if (buff->k_now > 0) {
+        buff->k_now--; // Jika masih di tengah baris, geser kursor ke kiri biasa
+    } 
+    // Jika kursor sudah mentok di kiri (index 0) dan baris atasnya ada:
+    else if (buff->current != NULL && buff->current->prev != NULL) { 
+        buff->current = buff->current->prev; // Lompat ke node baris atasnya
         buff->b_now--;
-        buff->k_now = strlen(buff->teks[buff->b_now]);
+        buff->k_now = strlen(buff->current->teks); // Taruh kursor di ujung kanan teks tersebut
     }
 }
 
 void moveRight(Buffer *buff) {
-    int panjang_baris = strlen(buff->teks[buff->b_now]);
-    if (buff->k_now < panjang_baris) buff->k_now++; 
-    else if (buff->b_now < buff->total_baris - 1) { 
+    if (buff->current == NULL) return; // Failsafe
+
+    int panjang_baris = strlen(buff->current->teks);
+    if (buff->k_now < panjang_baris) {
+        buff->k_now++; // Jika masih di tengah baris, geser kursor ke kanan biasa
+    } 
+    // Jika kursor mentok di kanan dan baris bawahnya ada:
+    else if (buff->current->next != NULL) { 
+        buff->current = buff->current->next; // Lompat ke node baris bawahnya
         buff->b_now++;
-        buff->k_now = 0;
+        buff->k_now = 0; // Taruh kursor di indeks 0 (paling kiri)
     }
 }
 
 void moveUp(Buffer *buff) {
-    if (buff->b_now > 0) {
-        buff->b_now--; 
-        int panjang_atas = strlen(buff->teks[buff->b_now]);
-        if (buff->k_now > panjang_atas) buff->k_now = panjang_atas; 
+    // Cek apakah kursor sedang tidak di baris paling atas (Node prev ada isinya)
+    if (buff->current != NULL && buff->current->prev != NULL) {
+        
+        // Pindahkan "mata kursor" ke Node baris atasnya
+        buff->current = buff->current->prev; 
+        buff->b_now--; // Update angka status baris
+        
+        // Sesuaikan posisi kolom (jangan sampai kursor bablas di ruang kosong)
+        int panjang_atas = strlen(buff->current->teks); // Minta ukuran teks di Node atas
+        if (buff->k_now > panjang_atas) {
+            buff->k_now = panjang_atas; 
+        }
     }
 }
 
 void moveDown(Buffer *buff) {
-    if (buff->b_now < buff->total_baris - 1) {
+    // Cek apakah node baris bawah (next) itu ada isinya
+    if (buff->current != NULL && buff->current->next != NULL) {
+        buff->current = buff->current->next; // Geser mata kursor ke baris bawah
         buff->b_now++; 
-        int panjang_bawah = strlen(buff->teks[buff->b_now]);
-        if (buff->k_now > panjang_bawah) buff->k_now = panjang_bawah;
+        
+        // Sesuaikan kursor kolom agar tidak melebihi panjang teks baris baru
+        int panjang_bawah = strlen(buff->current->teks);
+        if (buff->k_now > panjang_bawah) {
+            buff->k_now = panjang_bawah;
+        }
     }
 }
 
 void moveWordLeft(Buffer *buff) {
-    while (buff->k_now > 0 && isspace(buff->teks[buff->b_now][buff->k_now - 1])) moveLeft(buff);
-    while (buff->k_now > 0 && !isspace(buff->teks[buff->b_now][buff->k_now - 1])) moveLeft(buff);
-    if (buff->k_now == 0 && buff->b_now > 0) moveLeft(buff);
+    if (buff->current == NULL) return; // Failsafe
+
+    // Mundur selama menemukan spasi
+    while (buff->k_now > 0 && isspace(buff->current->teks[buff->k_now - 1])) {
+        moveLeft(buff);
+    }
+    // Mundur selama menemukan huruf (bukan spasi)
+    while (buff->k_now > 0 && !isspace(buff->current->teks[buff->k_now - 1])) {
+        moveLeft(buff);
+    }
+    // Jika sudah di ujung kiri baris, lompat ke baris atasnya
+    if (buff->k_now == 0 && buff->current->prev != NULL) {
+        moveLeft(buff);
+    }
 }
 
 void moveWordRight(Buffer *buff) {
-    int panjang_baris = strlen(buff->teks[buff->b_now]);
-    while (buff->k_now < panjang_baris && !isspace(buff->teks[buff->b_now][buff->k_now])) {
+    if (buff->current == NULL) return; // Failsafe
+
+    int panjang_baris = strlen(buff->current->teks);
+    
+    // Maju selama menemukan huruf (bukan spasi)
+    while (buff->k_now < panjang_baris && !isspace(buff->current->teks[buff->k_now])) {
         moveRight(buff);
-        panjang_baris = strlen(buff->teks[buff->b_now]); 
+        panjang_baris = strlen(buff->current->teks); 
     }
-    while (buff->k_now < panjang_baris && isspace(buff->teks[buff->b_now][buff->k_now])) {
+    // Maju selama menemukan spasi
+    while (buff->k_now < panjang_baris && isspace(buff->current->teks[buff->k_now])) {
         moveRight(buff);
-        panjang_baris = strlen(buff->teks[buff->b_now]);
+        panjang_baris = strlen(buff->current->teks);
     }
 }
 
+// Tambahkan 3 variabel statis ini di bagian atas file cursor.c (di bawah #include)
+static int is_selecting = 0;
+static int sel_start_b = -1;
+static int sel_start_k = -1;
+
+// Lalu ganti fungsi editorKursor menjadi ini:
 void editorKursor(Buffer *buff)
 {
+    // Deklarasi variabel lokal untuk menyimpan input tombol
+    int arrow;
+    int isShiftPressed;
+
     if (buff->input == -32 || buff->input == 224 || buff->input == 0) 
     {
-        buff->arrow = getch(); 
-        buff->isShiftPressed = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+        arrow = getch(); 
+        isShiftPressed = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
 
-        if (buff->isShiftPressed && !buff->is_selecting) 
+        if (isShiftPressed && !is_selecting) 
         {
-            buff->is_selecting = 1;
-            buff->sel_start_b = buff->b_now;
-            buff->sel_start_k = buff->k_now;
+            is_selecting = 1;
+            sel_start_b = buff->b_now;
+            sel_start_k = buff->k_now;
         }
-        else if (buff->arrow == KEY_DELETE) 
+        else if (arrow == KEY_DELETE) 
         {
             recordState(buff);
-            if (buff->is_selecting) 
+            if (is_selecting) 
             {
-                deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
-                buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+                deleteSelection(buff, sel_start_b, sel_start_k);
+                is_selecting = 0; 
+                sel_start_b = -1; 
+                sel_start_k = -1;
             } else 
             {
                 int old_b = buff->b_now, old_k = buff->k_now;
                 moveRight(buff);
                 if (buff->b_now != old_b || buff->k_now != old_k) 
                 {
-                    deleteHuruf(buff, &buff->b_now, &buff->k_now);
+                    deleteHuruf(buff); 
                 }
             }
             buff->isSaved = 0;
         } 
         else 
         {
-            if (!buff->isShiftPressed && buff->is_selecting)
+            if (!isShiftPressed && is_selecting)
             {
-                buff->is_selecting = 0; 
-                buff->sel_start_b = -1; buff->sel_start_k = -1;
+                is_selecting = 0; 
+                sel_start_b = -1; 
+                sel_start_k = -1;
             }
-            switch (buff->arrow) {
+            switch (arrow) {
                 case KEY_UP: moveUp(buff); break;
                 case KEY_DOWN: moveDown(buff); break;
                 case KEY_LEFT: moveLeft(buff); break;
@@ -200,51 +217,57 @@ void editorKursor(Buffer *buff)
             }
         }
         printLayar(buff, buff->b_now, buff->k_now);
-        if (buff->is_selecting) cetakHighlight(buff, buff->sel_start_b, buff->sel_start_k, buff->b_now, buff->k_now);
+        if (is_selecting) cetakHighlight(buff, sel_start_b, sel_start_k, buff->b_now, buff->k_now);
         gotoXY(buff, buff->k_now, buff->b_now);
     }
-    else if (buff->input == 17)
+    else if (buff->input == 17) // CTRL + Q (Copy)
     {
-        if (buff->is_selecting) 
+        if (is_selecting) 
         {
-            copyText(buff, buff->sel_start_b, buff->sel_start_k);
-            buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+            copyText(buff, sel_start_b, sel_start_k);
+            is_selecting = 0; 
+            sel_start_b = -1; 
+            sel_start_k = -1;
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);
         }
     }
-    else if (buff->input == 24)
+    else if (buff->input == 24) // CTRL + X (Cut)
     {
-        if (buff->is_selecting) 
+        if (is_selecting) 
         {
             recordState(buff);
-            cutText(buff, buff->sel_start_b, buff->sel_start_k);
-            buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+            cutText(buff, sel_start_b, sel_start_k);
+            is_selecting = 0; 
+            sel_start_b = -1; 
+            sel_start_k = -1;
             buff->isSaved = 0;
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);
         }
     }
-    else if (buff->input == 2)
+    else if (buff->input == 2) // CTRL + B (Paste)
     {
         recordState(buff);
-        if (buff->is_selecting) 
+        if (is_selecting) 
         {
-            deleteSelection(buff, buff->sel_start_b, buff->sel_start_k);
-            buff->is_selecting = 0; buff->sel_start_b = -1; buff->sel_start_k = -1;
+            deleteSelection(buff, sel_start_b, sel_start_k);
+            is_selecting = 0; 
+            sel_start_b = -1; 
+            sel_start_k = -1;
         }
         pasteText(buff);
         buff->isSaved = 0;
         printLayar(buff, buff->b_now, buff->k_now);
         gotoXY(buff, buff->k_now, buff->b_now);
     }
-    else if (buff->input == 26) // CTRL + Z
+    else if (buff->input == 26) // CTRL + Z (Undo)
     {
         undo(buff);
         printLayar(buff, buff->b_now, buff->k_now);
         gotoXY(buff, buff->k_now, buff->b_now);
     }
-    else if (buff->input == 25) // CTRL + Y
+    else if (buff->input == 25) // CTRL + Y (Redo)
     {
         redo(buff);
         printLayar(buff, buff->b_now, buff->k_now);
