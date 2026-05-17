@@ -8,17 +8,21 @@
 #include "../header/file_s.h"
 #include "../header/menu.h"
 
-int main() 
-{
-    Buffer buff;          
-    initBuffer(&buff);   
-    
-    buff.total_baris = 0; 
+int main() {
+    Buffer buff;
 
-    buff.isSaved = 0; // Status file belum disimpan
-    buff.namaFile[0] = '\0'; 
+    buff.head    = NULL;
+    buff.tail    = NULL;
+    buff.current = NULL;
+
+    initBuffer(&buff);
+
+    buff.isSaved      = 0;
+    buff.namaFile[0]  = '\0';
 
     tampilkanMenu(&buff);
+
+    freeList(&buff.head);
 
     return 0;
 }
