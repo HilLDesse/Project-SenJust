@@ -9,44 +9,56 @@
 #include "../header/menu.h" 
 
 void openFile(Buffer *ed) {
-    printf("Input nama file yang ingin dibuka (pakai format .txt):  ");
+    printf("Masukkan nama file yang ingin di buka: "); 
     fgets(ed->namaFile, 100, stdin);
     ed->namaFile[strcspn(ed->namaFile, "\n")] = 0;
 
     FILE *file = fopen(ed->namaFile, "r");
     if (file != NULL) {
-        ed -> total_baris = 0;
+        ed->total_baris = 0;
+        ed->head = NULL;
+        ed->tail = NULL;
 
-        while (ed->total_baris < MAX_LINE && 
-            fgets(ed->teks[ed->total_baris], MAX_COL, file)) {
-            ed->teks[ed->total_baris][strcspn(ed->teks[ed->total_baris], "\n")] = 0;
-            ed->total_baris++;
-            }
+        char temp_teks[1024];
+        while (fgets(temp_teks, sizeof(temp_teks), file)) {
+            temp_teks[strcspn(temp_teks, "\n")] = 0; // Buang Newline dari fgets
+            // 1. Alokasi Node Baru
+            Node *newNode = buatNode();
 
-            fclose(file);
-            ed->isSaved = 1; // 1 artinya file sudah di save
+            // 2. Alokasi memori teks secara dinamis
+            // strdup otomatis melakukan malloc(strlen(temp_teks) + 1) dan menyalin isinya.
+            newNode->teks = strdup(temp_teks);
 
-            printLayar(ed, ed->b_now, ed->k_now);
-            printf("\nFile %s berhasil dimuat.\n", ed->namaFile);
-
-            printf("Apakah anda ingin mengedit file ini? (y/n): ");
-            char edit = getch();
-            if (edit == 'y' || edit == 'Y') {
-                editFile(ed);
-            } 
-            else if (edit == 'n' || edit == 'N') {
-                printf("\nAnda memilih untuk tidak mengedit. Kembali ke menu utama...");
-                getch();
+            // 3. Sambungkan Node ke List
+            if (ed->head == NULL) {
+                newNode->prev = NULL;
+                ed->head = newNode;
+                ed->tail = newNode;
+                ed->current = newNode; // Set current ke baris pertama
             } else {
-                printf("\nInput tidak valid. Kembali ke menu utama...");
-                getch();
+                newNode->prev = ed->tail;
+                ed->tail->next = newNode;
+                ed->tail = newNode;
             }
-            
+            ed->total_baris++;
+        }
+
+        fclose(file);
+        ed->isSaved = 1;
+        printf("[Berhasil] file %s dibuka.\n", ed->namaFile);
+
+        printf("\n---ISI FILE---");
+        printLayar(ed, ed->b_now, ed->k_now);
+
+        printf("Apakah anda ingin mengedit file ini? (y/n): ");
+        char edit = getch();
+        if (edit == 'y' || edit == 'Y') {
+            editFile(ed); // MEMANGGIL FUNGSI EDIT 
+        }
+        
     } else {
-        printf("[ERROR] File tidak ditemukan!\n");
-        printf("Tekan tombol apa saja untuk keluar...");
-        ed->namaFile[0] = '\0';  // untuk stop membaca file 
-        getch();
+        printf("[Error] File tidak ditemukan!\n");
+        ed->namaFile[0] = '\0';
     }
 }
 
