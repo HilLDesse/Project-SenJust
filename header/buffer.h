@@ -3,36 +3,36 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-#define MAX_LINE 100
-#define MAX_COL 100
+typedef struct Node {
+    char *teks;          // Pointer ke string yang menyimpan isi baris
+    struct Node *prev;   // Pointer ke baris sebelumnya
+    struct Node *next;   // Pointer ke baris berikutnya
+} Node;
 
-// Struktur data untuk mengelola Buffer
-typedef struct 
-{
-    char teks[MAX_LINE][MAX_COL];
-    int total_baris;
-    char namaFile[100];
-    char namanewFile[100];
-    char namaoldFile[100];
-    int isSaved;
-    int autoSaveOn;
-    char input;
-    int next;
-    int b_now;
-    int k_now;
-    int is_selecting;
-    int sel_start_b;
-    int sel_start_k;
-    int arrow;
-    int isShiftPressed;
+typedef struct {
+    Node *head;          // Pointer ke baris pertama
+    Node *tail;          // Pointer ke baris terakhir
+    Node *current;       // Pointer ke baris saat ini
+
+    int total_baris;     // Jumlah total baris dalam buffer
+    int k_now;           // Posisi kolom saat ini
+    int b_now;           // Posisi baris saat ini
+
+    int input;           // Untuk menyimpan input karakter dari keyboard
+    int isSaved;         // Status penyimpanan
+    int autoSaveOn;      // Status autosave
+
+    char namaFile[100];  // File yang sedang dibuka
 } Buffer;
 
-// Fungsi untuk Buffer
-void initBuffer(Buffer *buff); // Fungsi untuk mengosongkan memori dan menyiapkan buffer teks baru
-void addBaris(Buffer *buff, char *input);  // Fungsi untuk menyalin teks input ke indeks array 2D yang masih kosong
-void insertHuruf(Buffer *buff, int *baris, int *kolom, char ch); // Fungsi untuk menyisipkan karakter ke dalam teks
-void deleteHuruf(Buffer *buff, int *baris, int *kolom); // Fungsi untuk menghapus huruf 
-void newBaris(Buffer *buff, int *baris, int *kolom); // Fungsi untuk buat baris baru
+Node *buatNode();                         // Membuat node baru dengan string kosong
+void freeList(Node **head);                // Membebaskan memori yang digunakan oleh seluruh node
+void initBuffer(Buffer *buff);            // Menginisialisasi buffer dengan node pertama
+void addBaris(Buffer *buff, char *input); // Menambahkan baris baru dengan isi dari input
+void insertHuruf(Buffer *buff, char ch);  // Menyisipkan karakter di posisi kursor saat ini
+void deleteHuruf(Buffer *buff);           // Menghapus karakter di posisi kursor saat ini
+void newBaris(Buffer *buff);              // Menambahkan baris baru di bawah baris saat ini
 
 #endif
