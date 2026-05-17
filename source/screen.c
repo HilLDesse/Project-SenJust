@@ -1,18 +1,16 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "../header/screen.h"
 
-void printLayar(Buffer *b, int baris_sekarang, int kolom_sekarang)
-{
-    system("cls"); // Menghapus seluruh teks di terminal
+void printLayar(Buffer *b, int baris_sekarang, int kolom_sekarang) {
+    printf("\033[H\033[J");
 
-    for (int i = 0; i < b->total_baris; i++) // Membaca memori dari baris pertama hingga baris terakhir.
-    {
-        printf("%s\n", b->teks[i]); // Menampilkan isi tiap baris ke layar
+    for (Node *node = b->head; node; node = node->next) {
+        printf("%s\n", node->teks);
     }
-    
+
     printf("\n------------------------------------------------------------------------------------------------------\n");
-    printf("|CTRL+S:Save | CTRL+Q:Copy | CTRL+B:Paste | CTRL+Z:Undo | CTRL+Y:Redo | CTRL+F:Find | CTRL+T:Autosave|");
-    printf("\n------------------------------------------------------------------------------------------------------\n");
-    printf("Tekan ESC untuk keluar aplikasi.\n");
-} 
+    printf("|CTRL+S:Save | CTRL+Q:Copy | CTRL+B:Paste | CTRL+Z:Undo | CTRL+Y:Redo | CTRL+F:Find | CTRL+T:Autosave|\n");
+    printf("------------------------------------------------------------------------------------------------------\n");
+
+    printf("Baris: %-4d | Kolom: %-4d | Tekan ESC untuk keluar.\n", baris_sekarang + 1, kolom_sekarang + 1);
+}
