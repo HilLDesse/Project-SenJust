@@ -52,6 +52,16 @@ void editFile(Buffer *buff) {
             printLayar(buff, buff->b_now, buff->k_now);
             buff->isSaved = 0;
         }
+        else if (buff->input == 6)  // Ctrl+F untuk fitur FindText
+        {
+            system("cls");
+            findText(buff);
+            
+            printLayar(buff, buff->b_now, buff->k_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
+
+            continue;
+        }
         else if (buff->input == 19) // Save File (Ctrl+S)
         {
             saveFile(buff);

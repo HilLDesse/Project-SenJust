@@ -22,10 +22,15 @@ void findText(Buffer *ed) {
 
     int ketemu = 0;
     for (int i = 0; i < ed->total_baris; i++) {
-        if (strstr(ed->teks[i], cari) != NULL) {
+        char *posisi = strstr(ed->teks[i], cari);
+        if (posisi != NULL) {
+            ed->b_now = i; // Pindahkan kursor ke baris yang ditemukan
+            ed->k_now = posisi - ed->teks[i]; // Pindahkan kursor ke posisi kata yang ditemukan
+
             printf("Ditemukan di baris %d\n", i + 1);
             printf("Isi: %s\n",ed->teks[i]);
             ketemu = 1;
+            break;
         }
     }
     if (!ketemu) { 
