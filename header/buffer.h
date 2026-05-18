@@ -19,6 +19,7 @@ typedef struct {
     int total_baris;     // Jumlah total baris dalam buffer
     int k_now;           // Posisi kolom saat ini
     int b_now;           // Posisi baris saat ini
+    int next;            // Status untuk melanjutkan program setelah edit
 
     int input;           // Untuk menyimpan input karakter dari keyboard
     int isSaved;         // Status penyimpanan

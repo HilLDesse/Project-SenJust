@@ -66,7 +66,7 @@ void closeFile(Buffer *ed) {
 
     ed->next = 1; // Default program terus berlanjut
 
-    if (ed->isSaved == 0) { // Kondis file belum disave
+    if (ed->isSaved == 0) { // Kondisi file belum disave
         system("cls");
         printf("[PERINGATAN] File belum disave, Apakah anda ingin menyimpan? (y/n): ");
         char simpan = getch();
@@ -90,6 +90,12 @@ void closeFile(Buffer *ed) {
         } else if (lanjut == 'n' || lanjut == 'N') {
             ed->next = 0;
             printf("\nKembali ke menu utama...");
+            freeList(ed->head); // Bebaskan memori sebelum kembali ke menu
+            ed->head = NULL;
+            ed->tail = NULL;
+            ed->current = NULL;
+            ed->total_baris = 0;
+
         } else {
             printf("\nInput tidak valid.\n");
             getch();
@@ -108,6 +114,12 @@ void closeFile(Buffer *ed) {
             } else if (lanjut == 'n' || lanjut == 'N') {
                 ed->next = 0;
                 printf("\nKembali ke menu utama...");
+                freeList(ed->head); // Bebaskan memori sebelum kembali ke menu
+                ed->head = NULL;
+                ed->tail = NULL;
+                ed->current = NULL;
+                ed->total_baris = 0;
+                
             } else {
                 printf("\nInput tidak valid.\n");
                 getch();
