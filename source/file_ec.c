@@ -7,6 +7,8 @@
 #include "../header/file_ec.h"
 #include "../header/file_s.h"
 #include "../header/buffer.h"
+#include "../header/cursor.h"
+#include "../header/teks_features.h"
 
 void editFile(Buffer *buff) {
 
@@ -29,6 +31,7 @@ void editFile(Buffer *buff) {
         buff->k_now   = strlen(buff->current->teks);
     }
     printLayar(buff, buff->b_now, buff->k_now);
+    gotoXY(buff, buff->k_now, buff->b_now);
 
     while (1)
     {
@@ -38,18 +41,21 @@ void editFile(Buffer *buff) {
         {
             insertHuruf(buff, (char)buff->input);
             printLayar(buff, buff->b_now, buff->k_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
         }
         else if (buff->input == 8)   // Backspace
         {
             deleteHuruf(buff);
             printLayar(buff, buff->b_now, buff->k_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
         }
         else if (buff->input == 13)  // Enter
         {
             newBaris(buff);
             printLayar(buff, buff->b_now, buff->k_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
         }
         else if (buff->input == 6)  // Ctrl+F untuk fitur FindText
@@ -66,6 +72,10 @@ void editFile(Buffer *buff) {
         {
             saveFile(buff);
             buff->isSaved = 1;
+        }
+        else
+        {
+            editorKursor(buff);
         }
     }
 }
