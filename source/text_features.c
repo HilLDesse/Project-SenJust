@@ -10,7 +10,7 @@ void findText(Buffer *ed) {
 
     char cari [100];
     printf("Cari kata yang ingin dicari: ");    
-    fgets(cari, 100, stdin);
+    fgets(cari, sizeof(cari), stdin); 
     cari[strcspn(cari, "\n")] = 0; // Membuang Newline
 
     if (strlen(cari) == 0) { // Memastikan Input tidak boleh kosong
@@ -21,18 +21,21 @@ void findText(Buffer *ed) {
     }
 
     int ketemu = 0;
-    for (int i = 0; i < ed->total_baris; i++) {
-        char *posisi = strstr(ed->teks[i], cari);
+    int baris_index = 0;
+    Node *curr = ed->head; // Mulai dari baris pertama
+    while (curr != NULL) {
+        char *posisi = strstr(curr->teks, cari);
         if (posisi != NULL) {
-            ed->b_now = i; // Pindahkan kursor ke baris yang ditemukan
-            ed->k_now = posisi - ed->teks[i]; // Pindahkan kursor ke posisi kata yang ditemukan
-
-            printf("Ditemukan di baris %d\n", i + 1);
-            printf("Isi: %s\n",ed->teks[i]);
+            ed->current = curr; // Pindahkan current ke baris yang ditemukan
+            ed->b_now = baris_index; // Pindahkan kursor ke baris yang ditemukan
+            ed->k_now = posisi - curr->teks; // Pindahkan kursor ke posisi kata yang ditemukan
             ketemu = 1;
             break;
         }
+        curr = curr->next; // Lanjut ke baris berikutnya
+        baris_index++;
     }
+    
     if (!ketemu) { 
         printf("Kata tidak ditemukan!.\n");
     }
