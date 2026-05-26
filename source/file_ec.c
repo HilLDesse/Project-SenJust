@@ -73,6 +73,14 @@ void editFile(Buffer *buff) {
             saveFile(buff);
             buff->isSaved = 1;
         }
+        else if (buff->input == 1) {
+            saveAS(buff);
+            buff->isSaved = 1;
+        } 
+        else if (buff->input == 20) // Tombol Ctrl+T
+        {
+            autoSave(buff);
+        }
         else
         {
             editorKursor(buff);
