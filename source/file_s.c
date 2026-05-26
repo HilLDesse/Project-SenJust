@@ -9,91 +9,85 @@
 #include "../header/cursor.h"
 
 
-void saveFile(Buffer *buff) 
+int saveFile(Buffer *buff) 
 { 
-    FILE *file = fopen(buff->namaFile, "w"); // Membuka file dengan mode tulis (write)
+    if (buff == NULL || strlen(buff->namaFile) == 0) { // Periksa apakah buffer valid dan nama file tidak kosong
+        printf("Nama file tidak valid. Simpan dibatalkan.\n");
+        return 0;
+    }
 
-    if (file != NULL) 
-    {
-        for (int i = 0; i < buff->total_baris; i++) {
-            fprintf(file, "%s\n", buff->teks[i]); // Menulis setiap baris teks ke dalam file 
+    FILE *file = fopen(buff->namaFile, "w"); // Buka file untuk ditulis, jika file tidak ada maka akan dibuat baru
+    if (file == NULL) { // Periksa apakah file berhasil dibuka
+        perror("Gagal membuka file");
+        return 0;
+    }
+ 
+    Node *node = buff->head; 
+    while (node != NULL) { // Looping untuk menulis setiap baris ke file
+        if (node->teks != NULL) {
+            if (fprintf(file, "%s\n", node->teks) < 0) { // Periksa apakah penulisan berhasil
+                fclose(file);
+                return 0;
+            }
+        } else {
+            fprintf(file, "\n"); // Jika teks NULL, tulis baris kosong
         }
-        
-        fclose(file);
-        buff->isSaved = 1; // Menandai bahwa file sudah disimpan
-    } 
-    else
-    {
-        printf("Gagal menyimpan file!\n");
+        node = node->next;
     }
+    fclose(file);
+    buff->isSaved = 1; // Tandai bahwa file sudah disimpan
+    return 1;
 }
 
-void shortcutSave(Buffer *buff) 
+void saveAS(Buffer *buff)
 {
-    if (buff->input == 19) 
-    {
-        saveFile(buff);
-        buff->isSaved = 1; // Menandai bahwa file sudah disimpan
+    if (buff == NULL || buff->input != 1) { // Periksa apakah buffer valid dan input adalah CTRL + A
+        return;
     }
-}
 
-void saveAS(Buffer *buff) 
-{
-    if (buff->input == 1)
-    {
-        system("cls");
-        strcpy(buff->namaoldFile, buff->namaFile);
-        input_nama_file: 
+    char namaoldFile[100];
+    char namanewFile[100];
+    strcpy(namaoldFile, buff->namaFile); // Simpan nama file lama untuk referensi jika penyimpanan gagal
+
+    while (1) {
         printf("Masukkan nama file baru: ");
-        fgets(buff->namanewFile, 100, stdin); // Mengambil input nama file dari user
-        buff->namanewFile[strcspn(buff->namanewFile, "\n")] = 0; // Menghapus /n dan menggantingan dengan 0 
-        if (strcmp(buff->namanewFile, buff->namaoldFile) == 0) 
-        {
-            printf("\n[PERINGATAN] Nama file baru tidak boleh sama!\n\n");
-            goto input_nama_file; // Lompat kembali ke atas
-        } 
-        else if (strlen(buff->namanewFile) == 0) 
-        {
+        if (fgets(namanewFile, sizeof(namanewFile), stdin) == NULL) { // Periksa apakah input berhasil dibaca
+            printf("\n[PERINGATAN] Input nama file gagal.\n");
+            return;
+        }
+
+        namanewFile[strcspn(namanewFile, "\n")] = '\0'; // Hapus newline yang mungkin terbaca dari input
+
+        if (strlen(namanewFile) == 0) { // Periksa apakah nama file baru kosong
             printf("\n[PERINGATAN] Nama file tidak boleh kosong!\n\n");
-            goto input_nama_file; // Lompat kembali ke atas
+            continue;
         }
 
-        FILE *cekFile = fopen(buff->namanewFile, "r");
-        if (cekFile != NULL)
-        {
+        if (strcmp(namanewFile, namaoldFile) == 0) { // Periksa apakah nama file baru sama dengan nama file lama
+            printf("\n[PERINGATAN] Nama file baru tidak boleh sama!\n\n");
+            continue;
+        }
+
+        FILE *cekFile = fopen(namanewFile, "r"); // Cek apakah file dengan nama baru sudah ada
+        if (cekFile != NULL) {
             fclose(cekFile);
-            
-            printf("\n[PERINGATAN] File '%s' sudah ada\n", buff->namanewFile);
-            goto input_nama_file; // Lompat kembali ke atas
-
+            printf("\n[PERINGATAN] File '%s' sudah ada\n", namanewFile);
+            continue;
         }
 
-        strcpy(buff->namaFile, buff->namanewFile); // Menyalin file lama ke file baru
-        saveFile(buff); // Menyimpan file dengan nama baru
-        printf("\nFile berhasil disimpan\n");
-        printf("Tekan 1 untuk edit file baru dan tekan 2 untuk edit file lama: ");
-
-        input_pilihan: 
-        printf("Pilihan: ");
-        char pilihan = getch();
-        if (pilihan == '1') 
-        {
-            printf("\n\nMembuka file '%s'...\n", buff->namaFile);
-        } 
-        else if (pilihan == '2') 
-        {
-            strcpy(buff->namaFile, buff->namaoldFile);
-            printf("\n\nKembali ke file '%s'...\n", buff->namaFile);
-        }
-        else 
-        {
-            printf("\nPilihan tidak valid, tekan 1 atau 2\n");
-            goto input_pilihan; // Lompat kembali ke pilihan
-        }
-        
-        printf("Tekan tombol apapun untuk melanjutkan...");
-        getch();
+        break;
     }
+
+    strcpy(buff->namaFile, namanewFile); // Update nama file di buffer dengan nama file baru
+    if (!saveFile(buff)) { // Coba simpan file dengan nama baru, jika gagal kembalikan nama file lama
+        printf("\nGagal menyimpan file '%s'\n", buff->namaFile);
+        strcpy(buff->namaFile, namaoldFile);
+        return;
+    }
+
+    printf("\nFile berhasil disimpan dan dibuka: %s\n", buff->namaFile);
+    printf("Tekan tombol apapun untuk melanjutkan...");
+    getch();
 }
 
 void autoSave(Buffer *buff) 
