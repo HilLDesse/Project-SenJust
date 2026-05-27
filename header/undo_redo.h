@@ -3,7 +3,7 @@
 
 #include "buffer.h"
 
-#define MAX_HISTORY 50
+#define MAX_HISTORY 200
 
 void initHistory();
 void recordState(Buffer *buffer);
