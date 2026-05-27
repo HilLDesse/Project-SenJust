@@ -3,7 +3,7 @@
 #include <conio.h>
 #include <stdlib.h>
 
-#include "../header/teks_features.h"
+#include "../header/text_features.h"
 #include "../header/File_OC.h"
 
 void findText(Buffer *ed) {

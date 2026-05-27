@@ -8,7 +8,7 @@
 #include "../header/file_s.h"
 #include "../header/buffer.h"
 #include "../header/cursor.h"
-#include "../header/teks_features.h"
+#include "../header/text_features.h"
 
 void editFile(Buffer *buff) {
 
