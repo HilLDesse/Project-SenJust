@@ -45,16 +45,31 @@ void findText(Buffer *ed) {
 }
 
 void NumberList(Buffer *ed, int angka_sebelumnya) {
-    newBaris(ed, &ed->b_now, &ed->k_now);
+    newBaris(ed);
 
     char nomorBaru[20];
     sprintf(nomorBaru, "%d. ", angka_sebelumnya + 1);
     
-    char teks_sementara[MAX_COL];
-    strcpy(teks_sementara, nomorBaru);
-    strcat(teks_sementara, ed->teks[ed->b_now]);
+    // Hitung kebutuhan memori untuk nomor baru dan teks lama
+    int panjang_nomor = strlen(nomorBaru);
+    int panjang_teks_lama = strlen(ed->current->teks);
 
-    strcpy(ed->teks[ed->b_now], teks_sementara);
+    // Alokasi memori dinamis untuk teks baru (nomor + teks lama)
+    char *teks_baru = (char *)malloc(panjang_nomor + panjang_teks_lama + 1); // +1 untuk null terminator
 
-    ed->k_now = strlen(nomorBaru);
+    if (teks_baru == NULL) {
+        printf("Memori penuh saat membuat list!\n");
+        return;
+    }
+
+    // Gabungkan nomor baru dengan teks lama
+    strcpy(teks_baru, nomorBaru);
+    strcat(teks_baru, ed->current->teks);
+
+    // Bebaskan memori teks lama dan ganti dengan teks baru
+    free(ed->current->teks);
+
+    ed->current->teks = teks_baru;
+
+    ed->k_now = panjang_nomor; // Pindahkan kursor ke posisi setelah nomor
 }
