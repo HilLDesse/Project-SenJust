@@ -53,9 +53,13 @@ void editFile(Buffer *buff) {
         }
         else if (buff->input == 13)  // Enter
         {
-            newBaris(buff);
+            int angka_list = 0;
+            if (sscanf(buff->current->teks, "%d. ", &angka_list) == 1 && strstr(buff->current->teks, ". ") != NULL) {
+                NumberList(buff, angka_list);
+            } else {
+                newBaris(buff);
+            }
             printLayar(buff, buff->b_now, buff->k_now);
-            gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
         }
         else if (buff->input == 6)  // Ctrl+F untuk fitur FindText
