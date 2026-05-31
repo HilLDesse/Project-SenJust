@@ -74,7 +74,15 @@ void editFile(Buffer *buff) {
         }
         else if (buff->input == 19) // Save File (Ctrl+S)
         {
-            saveFile(buff);
+            if (saveFile(buff)) {
+                printLayar(buff, buff->b_now, buff->k_now);
+                printf("\n[INFO] Update file berhasil disimpan!\n");
+                gotoXY(buff, buff->k_now, buff->b_now);
+            } else {
+                printLayar(buff, buff->b_now, buff->k_now);
+                printf("\n[PERINGATAN] Gagal menyimpan file '%s'\n", buff->namaFile);
+                gotoXY(buff, buff->k_now, buff->b_now);
+            }
             buff->isSaved = 1;
         }
         else if (buff->input == 1) {

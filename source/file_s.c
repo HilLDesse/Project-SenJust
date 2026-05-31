@@ -41,37 +41,43 @@ int saveFile(Buffer *buff)
 
 void saveAS(Buffer *buff)
 {
-    if (buff == NULL || buff->input != 1) { // Periksa apakah buffer valid dan input adalah CTRL + A
-        return;
-    }
+
+    saveFile(buff);
 
     char namaoldFile[100];
     char namanewFile[100];
+
     strcpy(namaoldFile, buff->namaFile); // Simpan nama file lama untuk referensi jika penyimpanan gagal
 
     while (1) {
-        printf("Masukkan nama file baru: ");
+
+        printLayar(buff, buff->b_now, buff->k_now);
+        printf("\nMasukkan nama file baru: ");
         if (fgets(namanewFile, sizeof(namanewFile), stdin) == NULL) { // Periksa apakah input berhasil dibaca
-            printf("\n[PERINGATAN] Input nama file gagal.\n");
-            return;
+            printf("[PERINGATAN] Input nama file gagal!\n\n");
+            getch();
+            continue;
         }
 
         namanewFile[strcspn(namanewFile, "\n")] = '\0'; // Hapus newline yang mungkin terbaca dari input
 
         if (strlen(namanewFile) == 0) { // Periksa apakah nama file baru kosong
-            printf("\n[PERINGATAN] Nama file tidak boleh kosong!\n\n");
+            printf("[PERINGATAN] Nama file tidak boleh kosong!\n\n");
+            getch();
             continue;
         }
 
         if (strcmp(namanewFile, namaoldFile) == 0) { // Periksa apakah nama file baru sama dengan nama file lama
-            printf("\n[PERINGATAN] Nama file baru tidak boleh sama!\n\n");
+            printf("[PERINGATAN] Nama file baru tidak boleh sama!\n\n");
+            getch();
             continue;
         }
 
         FILE *cekFile = fopen(namanewFile, "r"); // Cek apakah file dengan nama baru sudah ada
         if (cekFile != NULL) {
             fclose(cekFile);
-            printf("\n[PERINGATAN] File '%s' sudah ada\n", namanewFile);
+            printf("[PERINGATAN] Nama file sudah ada pada direktori ini!\n\n");
+            getch();
             continue;
         }
 
@@ -79,13 +85,16 @@ void saveAS(Buffer *buff)
     }
 
     strcpy(buff->namaFile, namanewFile); // Update nama file di buffer dengan nama file baru
+
     if (!saveFile(buff)) { // Coba simpan file dengan nama baru, jika gagal kembalikan nama file lama
-        printf("\nGagal menyimpan file '%s'\n", buff->namaFile);
+        printf("Gagal menyimpan file '%s'\n\n", buff->namaFile);
         strcpy(buff->namaFile, namaoldFile);
+        getch();
+        printLayar(buff, buff->b_now, buff->k_now);
         return;
     }
 
-    printf("\nFile berhasil disimpan dan dibuka: %s\n", buff->namaFile);
+    printf("File berhasil disimpan dan dibuka: %s\n\n", buff->namaFile);
     printf("Tekan tombol apapun untuk melanjutkan...");
     getch();
 }
