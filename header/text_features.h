@@ -5,5 +5,6 @@
 
 void findText(Buffer *ed);
 void NumberList(Buffer *ed, int angka_sebelumnya);
+void BulletedList(Buffer *ed, const char *bullet_style);
 
 #endif

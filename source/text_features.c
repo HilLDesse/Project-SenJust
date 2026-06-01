@@ -80,8 +80,24 @@ void NumberList(Buffer *ed, int angka_sebelumnya) {
     ed->k_now = panjang_nomor; // Pindahkan kursor ke posisi setelah nomor
 }
 
-// void BulletedList(Buffer *ed, const char *bullet_style) {
-//     newBaris(ed);
+void BulletedList(Buffer *ed, const char *bullet_style) {
+    newBaris(ed);
 
-//     int panjang_bullet = strlen(bullet_style)
-// }
+    int panjang_bullet = strlen(bullet_style);
+    int panjang_teks_lama = strlen(ed->current->teks);
+
+    char *teks_baru = (char *)malloc(panjang_bullet + panjang_teks_lama + 1); // +1 untuk null terminator
+
+    if (teks_baru == NULL) {
+        printf("Memori penuh saat membuat bullet list!\n");
+        return;
+    }
+
+    strcpy(teks_baru, bullet_style);
+    strcat(teks_baru, ed->current->teks);
+
+    free(ed->current->teks);
+    ed->current->teks = teks_baru;
+
+    ed->k_now = panjang_bullet; // Pindahkan kursor ke posisi setelah bullet
+}
