@@ -9,7 +9,10 @@
 void findText(Buffer *ed) {
 
     char cari [100];
-    printf("Cari kata yang ingin dicari: ");    
+    printf("Cari kata yang ingin dicari: (Case Sensitive) ");    
+
+    // fflush(stdin); // Bersihkan buffer input sebelum menggunakan fgets
+
     fgets(cari, sizeof(cari), stdin); 
     cari[strcspn(cari, "\n")] = 0; // Membuang Newline
 
@@ -28,7 +31,10 @@ void findText(Buffer *ed) {
         if (posisi != NULL) {
             ed->current = curr; // Pindahkan current ke baris yang ditemukan
             ed->b_now = baris_index; // Pindahkan kursor ke baris yang ditemukan
-            ed->k_now = posisi - curr->teks; // Pindahkan kursor ke posisi kata yang ditemukan
+
+            ed->k_now = (posisi - curr->teks) + strlen(cari); // Pindahkan kursor ke posisi kata yang ditemukan
+            printf("Kata ditemukan di baris %d\n", baris_index + 1);
+            printf("Isi teks : %s\n", curr->teks);
             ketemu = 1;
             break;
         }
@@ -73,3 +79,9 @@ void NumberList(Buffer *ed, int angka_sebelumnya) {
 
     ed->k_now = panjang_nomor; // Pindahkan kursor ke posisi setelah nomor
 }
+
+// void BulletedList(Buffer *ed, const char *bullet_style) {
+//     newBaris(ed);
+
+//     int panjang_bullet = strlen(bullet_style)
+// }

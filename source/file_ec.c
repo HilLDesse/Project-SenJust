@@ -6,6 +6,7 @@
 #include "../header/screen.h"
 #include "../header/file_ec.h"
 #include "../header/file_s.h"
+#include "../header/file_OC.h"
 #include "../header/buffer.h"
 #include "../header/cursor.h"
 #include "../header/text_features.h"
