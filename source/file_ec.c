@@ -75,6 +75,7 @@ void editFile(Buffer *buff) {
             }
             
             printLayar(buff, buff->b_now, buff->k_now);
+            gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
         }
         else if (buff->input == 6)  // Ctrl+F untuk fitur FindText

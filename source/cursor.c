@@ -15,10 +15,12 @@
 #define KEY_DELETE 83 
 
 void gotoXY(Buffer *buff, int x, int y) {
-    COORD coord;
-    coord.X = x; 
-    coord.Y = y; 
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+    // Menggunakan ANSI Escape Code agar 100% sinkron dengan printLayar.
+    // Catatan: Koordinat ANSI selalu dimulai dari angka 1, sehingga (y + 1) dan (x + 1).
+    printf("\033[%d;%dH", y + 1, x + 1);
+    
+    // Memaksa sistem terminal untuk langsung memindahkan kursor saat itu juga
+    fflush(stdout); 
 }
 
 void getSelectionBounds(int *b1, int *k1, int *b2, int *k2, int b_now, int k_now, int sel_b, int sel_k) {
