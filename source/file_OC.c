@@ -90,7 +90,7 @@ void closeFile(Buffer *ed) {
         } else if (lanjut == 'n' || lanjut == 'N') {
             ed->next = 0;
             printf("\nKembali ke menu utama...");
-            freeList(ed->head); // Bebaskan memori sebelum kembali ke menu
+            freeList(&ed->head); // Bebaskan memori sebelum kembali ke menu
             ed->head = NULL;
             ed->tail = NULL;
             ed->current = NULL;
@@ -114,7 +114,7 @@ void closeFile(Buffer *ed) {
             } else if (lanjut == 'n' || lanjut == 'N') {
                 ed->next = 0;
                 printf("\nKembali ke menu utama...");
-                freeList(ed->head); // Bebaskan memori sebelum kembali ke menu
+                freeList(&ed->head); // Bebaskan memori sebelum kembali ke menu
                 ed->head = NULL;
                 ed->tail = NULL;
                 ed->current = NULL;
