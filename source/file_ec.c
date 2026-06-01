@@ -72,6 +72,12 @@ void editFile(Buffer *buff) {
 
             continue;
         }
+        else if (buff->input == 27) { // ESC untuk keluar dari mode edit
+            closeFile(buff);
+            if (buff->next == 0) {
+                break; // Keluar dari loop edit jika user memilih untuk kembali ke menu utama
+            }
+        }
         else if (buff->input == 19) // Save File (Ctrl+S)
         {
             saveFile(buff);
