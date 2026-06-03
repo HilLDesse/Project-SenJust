@@ -231,6 +231,7 @@ void editorKursor(Buffer *buff)
                 }
             }
             buff->isSaved = 0;
+            checkAutoSave(buff);
         } 
         else 
         {
@@ -275,6 +276,7 @@ void editorKursor(Buffer *buff)
             sel_start_b = -1; 
             sel_start_k = -1;
             buff->isSaved = 0;
+            checkAutoSave(buff);
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);
         }
@@ -291,6 +293,7 @@ void editorKursor(Buffer *buff)
         }
         pasteText(buff);
         buff->isSaved = 0;
+        checkAutoSave(buff);
         printLayar(buff, buff->b_now, buff->k_now);
         gotoXY(buff, buff->k_now, buff->b_now);
     }

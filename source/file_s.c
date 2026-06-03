@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <time.h>
 #include "../header/screen.h"
 #include "../header/file_ec.h"
 #include "../header/file_s.h"
@@ -101,32 +102,47 @@ void saveAS(Buffer *buff)
 
 void autoSave(Buffer *buff) 
 {
-    buff->autoSaveOn = !buff->autoSaveOn; 
-        
-    if (buff->autoSaveOn == 1) 
-    {
-        printf("Auto Save: ON\n");
-            
-        if (strlen(buff->namaFile) > 0) 
-        {
-            saveFile(buff);
-        }
-    } 
-    else 
-    {
-        printf("Auto Save: OFF\n");
+    if (buff == NULL) {
+        return;
     }
-        
-    printf("\nTekan tombol apa saja untuk kembali mengedit...");
-    getch(); 
-        
-    system("cls");
-    printLayar(buff, buff->b_now, buff->k_now);
-        
-    gotoXY(buff, buff->k_now, buff->b_now); 
 
-    if (buff->autoSaveOn == 1 && buff->isSaved == 0 && strlen(buff->namaFile) > 0) 
+    buff->autoSaveOn = !buff->autoSaveOn; 
+
+    if (buff->autoSaveOn) 
     {
-        saveFile(buff);
+        buff->lastSaveTime = time(NULL);
+    }
+
+    printLayar(buff, buff->b_now, buff->k_now);
+    gotoXY(buff, buff->k_now, buff->b_now);
+}
+
+void checkAutoSave(Buffer *buff)
+{
+    if (buff->autoSaveOn && strlen(buff->namaFile) > 0 && !buff->isSaved) 
+    {
+        time_t timeNow = time(NULL);
+        
+        if (difftime(timeNow, buff->lastSaveTime) >= 30.0) 
+        {
+            FILE *file = fopen(buff->namaFile, "w");
+            if (file != NULL) 
+            {
+                Node *node = buff->head; 
+                while (node != NULL) 
+                {
+                    if (node->teks != NULL) {
+                        fprintf(file, "%s\n", node->teks);
+                    } else {
+                        fprintf(file, "\n");
+                    }
+                    node = node->next;
+                }
+                fclose(file);
+                
+                buff->isSaved = 1; 
+                buff->lastSaveTime = timeNow;
+            }
+        }
     }
 }

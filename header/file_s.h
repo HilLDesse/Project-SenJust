@@ -6,5 +6,6 @@
 int saveFile(Buffer *buff); // Fungsi untuk menyimpan file yang diedit
 void saveAS(Buffer *buff); // Fungsi untuk menyimpan file dengan nama baru (CTRL + SHIFT + S)
 void autoSave(Buffer *buff); // Fungsi untuk autosave dengan shortcut (CTRL + T)
+void checkAutoSave(Buffer *buff); // Fungsi untuk memeriksa apakah sudah waktunya melakukan autosave
 
 #endif

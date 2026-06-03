@@ -45,6 +45,7 @@ void editFile(Buffer *buff) {
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
+            checkAutoSave(buff);
         }
         else if (buff->input == 8)   // Backspace
         {
@@ -55,6 +56,7 @@ void editFile(Buffer *buff) {
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
+            checkAutoSave(buff);
         }
         else if (buff->input == 13)  // Enter
         {
@@ -92,6 +94,7 @@ void editFile(Buffer *buff) {
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
+            checkAutoSave(buff);
         }
         else if (buff->input == 6)  // Ctrl+F untuk fitur FindText
         {

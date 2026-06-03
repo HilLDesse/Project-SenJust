@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct Node {
     char *teks;          // Pointer ke string yang menyimpan isi baris
@@ -24,6 +25,7 @@ typedef struct {
     int input;           // Untuk menyimpan input karakter dari keyboard
     int isSaved;         // Status penyimpanan
     int autoSaveOn;      // Status autosave
+    time_t lastSaveTime; // Waktu terakhir penyimpanan
 
     char namaFile[100];  // File yang sedang dibuka
 } Buffer;
