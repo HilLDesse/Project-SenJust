@@ -14,6 +14,10 @@
 
 #define KEY_DELETE 83 
 
+static int is_selecting = 0;
+static int sel_start_b = -1;
+static int sel_start_k = -1;
+
 void gotoXY(Buffer *buff, int x, int y) {
     // Menggunakan ANSI Escape Code agar 100% sinkron dengan printLayar.
     // Catatan: Koordinat ANSI selalu dimulai dari angka 1, sehingga (y + 1) dan (x + 1).
@@ -158,10 +162,37 @@ void moveWordRight(Buffer *buff) {
     }
 }
 
-// Tambahkan 3 variabel statis ini di bagian atas file cursor.c (di bawah #include)
-static int is_selecting = 0;
-static int sel_start_b = -1;
-static int sel_start_k = -1;
+void deleteWordLeft(Buffer *buff) {
+    if (buff->current == NULL) return; // Failsafe
+
+    // Jika kursor berada di ujung kiri baris, lakukan backspace biasa (gabung ke baris atas)
+    if (buff->k_now == 0) {
+        deleteHuruf(buff);
+        return;
+    }
+
+    // 1. Hapus spasi kosong yang ada tepat di belakang kursor (jika ada)
+    while (buff->k_now > 0 && isspace(buff->current->teks[buff->k_now - 1])) {
+        deleteHuruf(buff);
+    }
+
+    // 2. Hapus huruf-huruf pembentuk kata sampai menabrak spasi lagi atau mentok ke kiri
+    while (buff->k_now > 0 && !isspace(buff->current->teks[buff->k_now - 1])) {
+        deleteHuruf(buff);
+    }
+}
+
+int hapusHighlightJikaAda(Buffer *buff) {
+    if (is_selecting) {
+        recordState(buff); // Simpan ke memory Undo agar bisa di CTRL+Z
+        deleteSelection(buff, sel_start_b, sel_start_k);
+        is_selecting = 0; 
+        sel_start_b = -1; 
+        sel_start_k = -1;
+        return 1; 
+    }
+    return 0; 
+}
 
 // Lalu ganti fungsi editorKursor menjadi ini:
 void editorKursor(Buffer *buff)
@@ -272,6 +303,30 @@ void editorKursor(Buffer *buff)
     else if (buff->input == 25) // CTRL + Y (Redo)
     {
         redo(buff);
+        printLayar(buff, buff->b_now, buff->k_now);
+        gotoXY(buff, buff->k_now, buff->b_now);
+    }
+    else if (buff->input == 127) // CTRL + BACKSPACE
+    {
+        recordState(buff); // Simpan ke Undo history
+        
+        if (is_selecting) 
+        {
+            // Jika sedang highlight, hapus blokannya
+            deleteSelection(buff, sel_start_b, sel_start_k);
+            is_selecting = 0; 
+            sel_start_b = -1; 
+            sel_start_k = -1;
+        }
+        else 
+        {
+            // Jika tidak ada highlight, hapus satu kata ke belakang
+            deleteWordLeft(buff);
+        }
+        
+        buff->isSaved = 0;
+        if (buff->autoSaveOn) saveFile(buff); // Simpan jika AutoSave nyala
+        
         printLayar(buff, buff->b_now, buff->k_now);
         gotoXY(buff, buff->k_now, buff->b_now);
     }

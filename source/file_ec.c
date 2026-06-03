@@ -40,6 +40,7 @@ void editFile(Buffer *buff) {
 
         if (buff->input >= 32 && buff->input <= 126) // Karakter yang bisa dicetak
         {
+            hapusHighlightJikaAda(buff);
             insertHuruf(buff, (char)buff->input);
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);
@@ -47,6 +48,9 @@ void editFile(Buffer *buff) {
         }
         else if (buff->input == 8)   // Backspace
         {
+            if (hapusHighlightJikaAda(buff) == 0) {
+                deleteHuruf(buff); 
+            }
             deleteHuruf(buff);
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);

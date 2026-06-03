@@ -19,6 +19,8 @@ void moveLeft(Buffer *buff);
 void moveRight(Buffer *buff);
 void moveWordLeft(Buffer *buff);
 void moveWordRight(Buffer *buff);
+void deleteWordLeft(Buffer *buff);
+int hapusHighlightJikaAda(Buffer *buff);
 
 // Tambahkan fungsi ini: Pengganti editFile milik file_ec.c
 void editorKursor(Buffer *buff);
