@@ -56,11 +56,22 @@ void editFile(Buffer *buff) {
         {
             int angka_list = 0;
             if (sscanf(buff->current->teks, "%d. ", &angka_list) == 1 && strstr(buff->current->teks, ". ") != NULL) {
-                NumberList(buff, angka_list);
+                char expected_prefix[20];
+                sprintf(expected_prefix, "%d. ", angka_list);
+
+                if (strcmp(buff->current->teks, expected_prefix) == 0) {
+                    char *temp = (char *)realloc(buff->current->teks, 1);
+                    if (temp != NULL) buff->current->teks = temp;
+                    buff->current->teks[0] = '\0'; // Bersihkan teks
+                    buff->k_now = 0;               // Kembalikan kursor ke kiri
+                } else {
+                    NumberList(buff, angka_list);
+                }
             } else if (strncmp(buff->current->teks, "- ", 2) == 0 || strncmp(buff->current->teks, "* ", 2) == 0) {
                 char bullet_style[3];
                 strncpy(bullet_style, buff->current->teks, 2);
                 bullet_style[2] = '\0';
+
                 // Cek apakah user ingin berhenti (baris HANYA berisi bullet)
                 if (strcmp(buff->current->teks, bullet_style) == 0) {
                     char *temp = (char *)realloc(buff->current->teks, 1);
