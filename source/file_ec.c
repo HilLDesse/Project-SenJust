@@ -50,9 +50,8 @@ void editFile(Buffer *buff) {
         else if (buff->input == 8)   // Backspace
         {
             if (hapusHighlightJikaAda(buff) == 0) {
-                deleteHuruf(buff); 
+                deleteHuruf(buff);
             }
-            deleteHuruf(buff);
             printLayar(buff, buff->b_now, buff->k_now);
             gotoXY(buff, buff->k_now, buff->b_now);
             buff->isSaved = 0;
