@@ -114,6 +114,13 @@ void autoSave(Buffer *buff)
     }
 
     printLayar(buff, buff->b_now, buff->k_now);
+
+    if (buff->autoSaveOn) {
+        printf("\nAutosave DINYALAKAN. File akan disimpan otomatis setiap 30 detik.\n");
+    } else {
+        printf("\nAutosave DIMATIKAN.\n");
+    }
+
     gotoXY(buff, buff->k_now, buff->b_now);
 }
 

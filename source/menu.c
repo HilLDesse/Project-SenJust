@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <time.h>
 #include "../header/menu.h"
 #include "../header/buffer.h"
 #include "../header/file_ec.h"
@@ -77,13 +78,17 @@ void tampilkanMenu(Buffer *buff)
             case 1:
                 initBuffer(buff);
                 buff->isSaved = 0;
+                buff->autoSaveOn = 0;
+                buff->lastSaveTime = time(NULL);
                 buff->namaFile[0] = '\0';
                 createFile(buff);
                 break;
                 
             case 2:
                 initBuffer(buff);
-                buff->isSaved = 0; 
+                buff->isSaved = 0;
+                buff->autoSaveOn = 0;
+                buff->lastSaveTime = time(NULL);
                 buff->namaFile[0] = '\0';
                 openFile(buff);
                 break;

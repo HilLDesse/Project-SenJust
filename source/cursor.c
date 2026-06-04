@@ -328,7 +328,7 @@ void editorKursor(Buffer *buff)
         }
         
         buff->isSaved = 0;
-        if (buff->autoSaveOn) saveFile(buff); // Simpan jika AutoSave nyala
+        checkAutoSave(buff);
         
         printLayar(buff, buff->b_now, buff->k_now);
         gotoXY(buff, buff->k_now, buff->b_now);

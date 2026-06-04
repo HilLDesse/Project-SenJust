@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
+#include <time.h>
 #include "../header/buffer.h"
 #include "../header/screen.h"
 #include "../header/file_ec.h"
@@ -18,6 +19,8 @@ int main() {
     initBuffer(&buff);
 
     buff.isSaved      = 0;
+    buff.autoSaveOn   = 0;
+    buff.lastSaveTime = time(NULL);
     buff.namaFile[0]  = '\0';
 
     tampilkanMenu(&buff);
