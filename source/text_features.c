@@ -11,12 +11,10 @@ void findText(Buffer *ed) {
     char cari [100];
     printf("Cari kata yang ingin dicari: (Case Sensitive) ");    
 
-    // fflush(stdin); // Bersihkan buffer input sebelum menggunakan fgets
-
     fgets(cari, sizeof(cari), stdin); 
-    cari[strcspn(cari, "\n")] = 0; // Membuang Newline
+    cari[strcspn(cari, "\n")] = 0; 
 
-    if (strlen(cari) == 0) { // Memastikan Input tidak boleh kosong
+    if (strlen(cari) == 0) { 
         printf("Kata yang dicari tidak boleh kosong!.\n");
         printf("Tekan enter untuk kembali ke menu...");
         getch();
@@ -76,8 +74,41 @@ void NumberList(Buffer *ed, int angka_sebelumnya) {
     free(ed->current->teks);
 
     ed->current->teks = teks_baru;
-
     ed->k_now = panjang_nomor; // Pindahkan kursor ke posisi setelah nomor
+
+    Node *traverse = ed->current->next;
+    int nomor_berikutnya = angka_sebelumnya + 2; // Nomor berikutnya setelah nomor baru
+
+    while (traverse != NULL) {
+        int deteksi_nomor = 0;
+
+        if (sscanf(traverse->teks, "%d. ", &deteksi_nomor) == 1 && strstr(traverse->teks, ". ") != NULL) {
+            // Misalnya jika angka aslinya "3. ", kita akan melewati 3 karakter ini untuk mendapatkan nomor berikutnya
+            char old_nomor[20];
+            sprintf(old_nomor, "%d. ", deteksi_nomor);
+
+            // Ambil sisa teks aslinya (tepat setelah angka dan spasi)
+            char *teks_asli = traverse->teks + strlen(old_nomor);
+
+            char new_nomor[20];
+            sprintf(new_nomor, "%d. ", nomor_berikutnya);
+
+            // Alokasi memori untuk teks yang diperbarui (nomor baru + teks asli)
+            char *update_teks = (char *)malloc(strlen(new_nomor) + strlen(teks_asli) + 1); // +1 untuk null terminator
+            if (update_teks != NULL) {
+                strcpy(update_teks, new_nomor);
+                strcat(update_teks, teks_asli);
+
+                // Replace teks lama dengan teks yang diperbarui
+                free(traverse->teks);
+                traverse->teks = update_teks;
+            }
+            nomor_berikutnya++;
+            traverse = traverse->next;
+        } else {
+            break; 
+        }
+    }
 }
 
 void BulletedList(Buffer *ed, const char *bullet_style) {
