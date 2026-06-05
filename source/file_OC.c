@@ -67,7 +67,8 @@ void closeFile(Buffer *ed) {
     ed->next = 1; // Default program terus berlanjut
 
     if (ed->isSaved == 0) { // Kondisi file belum disave
-        printf("[PERINGATAN] File belum disave, Apakah anda ingin menyimpan? (y/n): ");
+        printLayar(ed, ed->b_now, ed->k_now);
+        printf("\n[PERINGATAN] File belum disave, Apakah anda ingin menyimpan? (y/n): ");
         char simpan = getch();
         
         if (simpan == 'y' || simpan == 'Y') {
@@ -80,6 +81,7 @@ void closeFile(Buffer *ed) {
             return;
         }
 
+        printLayar(ed, ed->b_now, ed->k_now);
         printf("\nLanjut edit file atau kembali ke menu utama? (y/n): ");
         char lanjut = getch();
 
@@ -102,7 +104,8 @@ void closeFile(Buffer *ed) {
         }
 
     } else if (ed->isSaved == 1) {
-            printf("Lanjut edit file atau kembali ke menu utama? (y/n): ");
+            printLayar(ed, ed->b_now, ed->k_now);
+            printf("\nLanjut edit file atau kembali ke menu utama? (y/n): ");
             char lanjut = getch();
 
             if (lanjut == 'y' || lanjut == 'Y') {
