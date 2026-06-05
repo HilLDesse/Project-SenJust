@@ -12,7 +12,8 @@
 #include "../header/undo_redo.h"
 #include "../header/clipboard.h"
 
-#define KEY_DELETE 83 
+#define KEY_DELETE 83
+#define MAX_ROWS 20  
 
 static int is_selecting = 0;
 static int sel_start_b = -1;
@@ -21,10 +22,12 @@ static int sel_start_k = -1;
 void gotoXY(Buffer *buff, int x, int y) {
     // Menggunakan ANSI Escape Code agar 100% sinkron dengan printLayar.
     // Catatan: Koordinat ANSI selalu dimulai dari angka 1, sehingga (y + 1) dan (x + 1).
-    printf("\033[%d;%dH", y + 1, x + 1);
-    
-    // Memaksa sistem terminal untuk langsung memindahkan kursor saat itu juga
-    fflush(stdout); 
+    int screen_y = y - buff->row_offset;
+
+    if (screen_y >= 0 && screen_y < MAX_ROWS) {
+        printf("\033[%d;%dH", screen_y + 1, x + 1);
+        fflush(stdout); 
+    }
 }
 
 void getSelectionBounds(int *b1, int *k1, int *b2, int *k2, int b_now, int k_now, int sel_b, int sel_k) {
@@ -54,15 +57,17 @@ void cetakHighlight(Buffer *buff, int start_b, int start_k, int end_b, int end_k
 
     // 2. Loop mewarnai per baris (berjalan menggunakan curr = curr->next)
     for (int r = b1; r <= b2 && curr != NULL; r++) {
-        int len = strlen(curr->teks);
-        int c_start = (r == b1) ? k1 : 0;
-        int c_end = (r == b2) ? k2 : len; 
+        if (r >= buff->row_offset && r < buff->row_offset + MAX_ROWS) {
+            int len = strlen(curr->teks);
+            int c_start = (r == b1) ? k1 : 0;
+            int c_end = (r == b2) ? k2 : len;
 
         // Mewarnai karakter dari titik c_start sampai c_end
-        for (int c = c_start; c < c_end; c++) {
-            gotoXY(buff, c, r);
-            SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
-            printf("%c", curr->teks[c]); 
+            for (int c = c_start; c < c_end; c++) {
+                gotoXY(buff, c, r);
+                SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
+                printf("%c", curr->teks[c]); 
+            }
         }
         
         curr = curr->next; // Pindah ke node baris selanjutnya
