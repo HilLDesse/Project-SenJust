@@ -28,6 +28,7 @@ typedef struct {
     time_t lastSaveTime; // Waktu terakhir penyimpanan
 
     char namaFile[100];  // File yang sedang dibuka
+    int row_offset;      // Untuk menyimpan offset baris saat ini (untuk fitur scroll)
 } Buffer;
 
 Node *buatNode();                         // Membuat node baru dengan string kosong
