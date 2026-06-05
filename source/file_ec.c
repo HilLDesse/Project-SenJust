@@ -36,7 +36,12 @@ void editFile(Buffer *buff) {
 
     while (1)
     {
-        buff->input = getch();
+        if (kbhit()) {
+            buff->input = getch();
+        } else {
+            checkAutoSave(buff);
+            continue;
+        }
 
         if (buff->input >= 32 && buff->input <= 126) // Karakter yang bisa dicetak
         {

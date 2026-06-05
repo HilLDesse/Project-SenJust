@@ -116,7 +116,7 @@ void autoSave(Buffer *buff)
     printLayar(buff, buff->b_now, buff->k_now);
 
     if (buff->autoSaveOn) {
-        printf("\nAutosave DINYALAKAN. File akan disimpan otomatis setiap 30 detik.\n");
+        printf("\nAutosave DINYALAKAN. File akan disimpan otomatis setiap 20 detik.\n");
     } else {
         printf("\nAutosave DIMATIKAN.\n");
     }
@@ -126,29 +126,25 @@ void autoSave(Buffer *buff)
 
 void checkAutoSave(Buffer *buff)
 {
-    if (buff->autoSaveOn && strlen(buff->namaFile) > 0 && !buff->isSaved) 
+    if (buff == NULL) {
+        return;
+    }
+
+      if (buff->autoSaveOn && strlen(buff->namaFile) > 0 && !buff->isSaved) 
     {
         time_t timeNow = time(NULL);
         
-        if (difftime(timeNow, buff->lastSaveTime) >= 30.0) 
+        if (difftime(timeNow, buff->lastSaveTime) >= 20.0) 
         {
-            FILE *file = fopen(buff->namaFile, "w");
-            if (file != NULL) 
+            if (saveFile(buff)) 
             {
-                Node *node = buff->head; 
-                while (node != NULL) 
-                {
-                    if (node->teks != NULL) {
-                        fprintf(file, "%s\n", node->teks);
-                    } else {
-                        fprintf(file, "\n");
-                    }
-                    node = node->next;
-                }
-                fclose(file);
-                
-                buff->isSaved = 1; 
                 buff->lastSaveTime = timeNow;
+ 
+                int k = buff->k_now;
+                int b = buff->b_now;
+                printLayar(buff, b, k);
+                printf("\n[AutoSave] File '%s' otomatis disimpan.\n", buff->namaFile);
+                gotoXY(buff, k, b);
             }
         }
     }
