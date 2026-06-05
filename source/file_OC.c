@@ -22,14 +22,14 @@ void openFile(Buffer *ed) {
         char temp_teks[1024];
         while (fgets(temp_teks, sizeof(temp_teks), file)) {
             temp_teks[strcspn(temp_teks, "\n")] = 0; // Buang Newline dari fgets
-            // 1. Alokasi Node Baru
+            // Alokasi Node Baru
             Node *newNode = buatNode();
 
-            // 2. Alokasi memori teks secara dinamis
+            // Alokasi memori teks secara dinamis
             // strdup otomatis melakukan malloc(strlen(temp_teks) + 1) dan menyalin isinya.
             newNode->teks = strdup(temp_teks);
 
-            // 3. Sambungkan Node ke List
+            // Menyambungkan Node ke List
             if (ed->head == NULL) {
                 newNode->prev = NULL;
                 ed->head = newNode;

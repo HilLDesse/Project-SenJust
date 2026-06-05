@@ -9,7 +9,7 @@
 void findText(Buffer *ed) {
 
     char cari [100];
-    printf("Cari kata yang ingin dicari: (Case Sensitive) ");    
+    printf("Cari kata yang ingin dicari (Case Sensitive) : ");    
 
     fgets(cari, sizeof(cari), stdin); 
     cari[strcspn(cari, "\n")] = 0; 
@@ -44,7 +44,7 @@ void findText(Buffer *ed) {
         printf("Kata tidak ditemukan!.\n");
     }
 
-    printf("\nTekan tombol apapun untuk kembali ke menu...");
+    printf("\nTekan tombol apapun untuk menuju kata yang ditemukan..");
     getch();
 }
 
@@ -74,10 +74,10 @@ void NumberList(Buffer *ed, int angka_sebelumnya) {
     free(ed->current->teks);
 
     ed->current->teks = teks_baru;
-    ed->k_now = panjang_nomor; // Pindahkan kursor ke posisi setelah nomor
+    ed->k_now = panjang_nomor; // Pindahkan kursor ke posisi setelah nomor 
 
     Node *traverse = ed->current->next;
-    int nomor_berikutnya = angka_sebelumnya + 2; // Nomor berikutnya setelah nomor baru
+    int nomor_berikutnya = angka_sebelumnya + 2; 
 
     while (traverse != NULL) {
         int deteksi_nomor = 0;
