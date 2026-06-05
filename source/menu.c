@@ -11,7 +11,7 @@
 void tampilkanShortcuts() {
     system("cls");
     printf("+===============================================================================+\n");
-    printf("|                      * * * SHORTCUT JUST NOTE * * *                           |\n");
+    printf("|                     * * * SHORTCUT JUST' NOTE * * *                           |\n");
     printf("+===============================================================================+\n");
     printf("|                                                                               |\n");
     printf("|    CTRL + Q         : Copy teks yang di highlight                             |\n");
@@ -37,7 +37,7 @@ void tampilkanShortcuts() {
 void tampilkanCredit() {
     system("cls");
     printf("+=============================================================================+\n");
-    printf("|                      * * * CREDIT JUST NOTE * * *                           |\n");
+    printf("|                     * * * CREDIT JUST' NOTE * * *                           |\n");
     printf("+=============================================================================+\n");
     printf("|                                                                             |\n");
     printf("|  POLITEKNIK NEGERI BANDUNG                                                  |\n");
@@ -62,7 +62,7 @@ void tampilkanMenu(Buffer *buff)
     do {
         system("cls");
         printf("=======================================\n");
-        printf("               JUST NOTE               \n");
+        printf("              JUST' NOTE               \n");
         printf("=======================================\n");
         printf("1. Buat File Baru\n");
         printf("2. Buka File\n");
