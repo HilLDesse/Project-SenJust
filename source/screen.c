@@ -17,9 +17,17 @@ void printLayar(Buffer *buff, int baris_sekarang, int kolom_sekarang) {
     }
     if (term_width < 40) term_width = 80; // Failsafe
 
-    // 2. Hitung Horizontal Scroll (Geser kanan-kiri)
-    int page_width = term_width - 10;
-    buff->col_offset = (kolom_sekarang / page_width) * page_width;
+    // 2. Hitung Horizontal Scroll (Smooth Panning / Geser Halus)
+    int margin = 10; // Jarak batas kursor dari ujung kanan sebelum layar mulai bergeser
+    
+    // Jika kursor menabrak batas kanan, geser layar ke kanan perlahan
+    if (kolom_sekarang >= buff->col_offset + term_width - margin) {
+        buff->col_offset = kolom_sekarang - term_width + margin + 1;
+    } 
+    // Jika kursor mundur melebihi layar kiri (saat panah kiri/backspace), geser layar balik ke kiri
+    else if (kolom_sekarang < buff->col_offset) {
+        buff->col_offset = kolom_sekarang; 
+    }
 
     // 3. Hitung Vertical Scroll (Geser atas-bawah)
     if (baris_sekarang < buff->row_offset) {

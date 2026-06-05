@@ -20,23 +20,11 @@ static int sel_start_b = -1;
 static int sel_start_k = -1;
 
 void gotoXY(Buffer *buff, int x, int y) {
-    // 1. Dapatkan lebar layar yang sama persis dengan printLayar di screen.c
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    int term_width = 80;
-    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
-        term_width = csbi.srWindow.Right - csbi.srWindow.Left - 1;
-    }
-    if (term_width < 40) term_width = 80;
-
-    // 2. Hitung pergeseran layar (Horizontal Scroll)
-    int page_width = term_width - 10;
-    int col_offset = (x / page_width) * page_width;
-
-    // 3. Kalkulasi koordinat asli kursor di monitor
+    // 1. Koordinat visual kursor sekarang murni mengikuti pergeseran (offset) dari buffer
     int screen_y = y - buff->row_offset;
-    int screen_x = x - col_offset;
+    int screen_x = x - buff->col_offset; 
 
-    // 4. Pindahkan kursor hanya jika posisinya berada di dalam area UI teks (MAX_ROWS)
+    // 2. Pindahkan kursor hanya jika posisinya berada di dalam area pandang monitor
     if (screen_y >= 0 && screen_y < MAX_ROWS && screen_x >= 0) {
         printf("\033[%d;%dH", screen_y + 1, screen_x + 1);
         fflush(stdout); 
