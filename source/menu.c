@@ -10,25 +10,26 @@
 
 void tampilkanShortcuts() {
     system("cls");
-    printf("+=============================================================================+\n");
-    printf("|                  * * * SHORTCUT SEN'JUST TEXT EDITOR * * * |\n");
-    printf("+=============================================================================+\n");
-    printf("|                                                                             |\n");
-    printf("|    CTRL + Q       : Copy teks yang di highlight                             |\n");
-    printf("|    CTRL + X       : Cut teks yang di highlight                              |\n");
-    printf("|    CTRL + B       : Paste teks yang sudah di copy                           |\n");
-    printf("|    CTRL + S       : Simpan File (Save)                                      |\n");
-    printf("|    CTRL + A       : Simpan dengan nama baru (Save As)                       |\n");
-    printf("|    CTRL + T       : Nyala / Matikan fitur AutoSave                          |\n");
-    printf("|    CRTL + Z       : Undo (Membatalkan aksi terakhir)                        |\n");
-    printf("|    CTRL + Y       : Redo (Mengembalikan aksi yang sudah di-undo)            |\n");
-    printf("|    ESC            : Keluar dari Editor / Tutup File                         |\n");
-    printf("|    CTRL + F       : Cari Teks (Find)                                        |\n");
-    printf("|    Tombol Panah   : Memindahkan Kursor (Atas/Bawah/Kiri/Kanan)              |\n");
-    printf("|    CTRL + Panah   : Memindahkan Kursor per kata (Word jump)                 |\n");
-    printf("|    SHIFT + Panah  : Memblok / Sorot Teks (Highlight)                        |\n");
-    printf("|                                                                             |\n");
-    printf("+=============================================================================+\n\n");
+    printf("+===============================================================================+\n");
+    printf("|                      * * * SHORTCUT JUST NOTE * * *                           |\n");
+    printf("+===============================================================================+\n");
+    printf("|                                                                               |\n");
+    printf("|    CTRL + Q         : Copy teks yang di highlight                             |\n");
+    printf("|    CTRL + X         : Cut teks yang di highlight                              |\n");
+    printf("|    CTRL + B         : Paste teks yang sudah di copy                           |\n");
+    printf("|    CTRL + S         : Simpan File (Save)                                      |\n");
+    printf("|    CTRL + A         : Simpan dengan nama baru (Save As)                       |\n");
+    printf("|    CTRL + T         : Nyala / Matikan fitur AutoSave                          |\n");
+    printf("|    CTRL + Z         : Undo (Membatalkan aksi terakhir)                        |\n");
+    printf("|    CTRL + Y         : Redo (Mengembalikan aksi yang sudah di-undo)            |\n");
+    printf("|    CTRL + F         : Cari Teks (Find)                                        |\n");
+    printf("|    CTRL + Backspace : Menghapus satu kata sebelumnya (Delete Word)            |\n");
+    printf("|    ESC              : Keluar dari Editor / Tutup File                         |\n");
+    printf("|    Tombol Panah     : Memindahkan Kursor (Atas/Bawah/Kiri/Kanan)              |\n");
+    printf("|    CTRL + Panah     : Memindahkan Kursor per kata (Word jump)                 |\n");
+    printf("|    SHIFT + Panah    : Memblok / Sorot Teks (Highlight)                        |\n");
+    printf("|                                                                               |\n");
+    printf("+===============================================================================+\n\n");
     printf("  >> Tekan tombol apa saja untuk kembali... ");
     getch();
 }
@@ -36,7 +37,7 @@ void tampilkanShortcuts() {
 void tampilkanCredit() {
     system("cls");
     printf("+=============================================================================+\n");
-    printf("|                   * * * CREDIT SEN'JUST TEXT EDITOR * * * |\n");
+    printf("|                      * * * CREDIT JUST NOTE * * *                           |\n");
     printf("+=============================================================================+\n");
     printf("|                                                                             |\n");
     printf("|  POLITEKNIK NEGERI BANDUNG                                                  |\n");
@@ -61,7 +62,7 @@ void tampilkanMenu(Buffer *buff)
     do {
         system("cls");
         printf("=======================================\n");
-        printf("         SEN'JUST TEXT EDITOR          \n");
+        printf("               JUST NOTE               \n");
         printf("=======================================\n");
         printf("1. Buat File Baru\n");
         printf("2. Buka File\n");
@@ -81,6 +82,8 @@ void tampilkanMenu(Buffer *buff)
                 buff->autoSaveOn = 0;
                 buff->lastSaveTime = time(NULL);
                 buff->namaFile[0] = '\0';
+                buff->row_offset = 0;
+                buff->col_offset = 0;
                 createFile(buff);
                 break;
                 
@@ -90,6 +93,8 @@ void tampilkanMenu(Buffer *buff)
                 buff->autoSaveOn = 0;
                 buff->lastSaveTime = time(NULL);
                 buff->namaFile[0] = '\0';
+                buff->row_offset = 0; 
+                buff->col_offset = 0; 
                 openFile(buff);
                 break;
 
